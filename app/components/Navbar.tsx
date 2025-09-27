@@ -1,10 +1,9 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit";
-
 import { motion } from "motion/react";
-import { useMemo } from "react";
 import { FaBell, FaCog } from "react-icons/fa";
-import { useTheme } from "remix-themes";
 import { useAccount, useDisconnect } from "wagmi";
+import { SidebarTrigger } from "./ui/sidebar";
+import { ModeToggle } from "./ModeToggle";
 
 const Navbar = () => {
   const { address, isConnected } = useAccount();
@@ -12,10 +11,6 @@ const Navbar = () => {
   const formatAddress = (address: string) => {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
-  const [theme, setTheme, metadata] = useTheme();
-  //   const isDarkMode = useMemo(() => {
-  //     return theme ==="dark"
-  //   }, [theme]);
 
   return (
     <motion.nav
@@ -24,19 +19,10 @@ const Navbar = () => {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div>
-        <h1 className="text-xl font-bold">Alliance Power Dashboard</h1>
-      </div>
+      <SidebarTrigger />
 
       <div className="flex items-center space-x-4">
-        {/* Theme Toggle Button */}
-        <button
-          suppressHydrationWarning
-          onClick={() => setTheme("light" as any)}
-          className="p-2 rounded-full dark:bg-gray-700 bg-gray-200"
-        >
-          {/* {i ? "☀️" : "🌙"} */}
-        </button>
+        <ModeToggle />
         {/* Notification Icon */}
         <button className="p-2 rounded-full dark:hover:bg-gray-700 hover:bg-gray-100">
           <FaBell />

@@ -8,6 +8,9 @@ import {
 } from "~/data/mockData";
 import StatsCards from "~/components/StatsCard";
 import { useState } from "react";
+import EnergyChart from "~/components/EnergyChart";
+import TokenBalance from "~/components/TokenBalance";
+import CarbonImpact from "~/components/CarbonImpact";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -48,6 +51,7 @@ export default function Home() {
       <motion.h1 className="text-3xl font-bold mb-6" variants={itemVariants}>
         Energy Dashboard
       </motion.h1>
+
       <motion.div className="mb-6" variants={itemVariants}>
         <StatsCards
           energyGenerated={energyData[timeframe].generated.reduce(
@@ -59,6 +63,45 @@ export default function Home() {
           tokenValue={tokenBalances.energy * 0.15 + tokenBalances.carbon * 0.28}
         />
       </motion.div>
+      <div className="flex mb-4 space-x-4">
+        {["daily", "weekly", "monthly"].map((option) => (
+          <button
+            key={option}
+            onClick={() => setTimeframe(option as Timeframe)}
+            className={`px-4 py-2 rounded-lg ${
+              timeframe === option
+                ? "dark:bg-green-600 dark:text-white bg-green-500 text-white"
+                : "dark:bg-gray-700 dark:text-gray-300 bg-gray-200 text-gray-700"
+            } transition-colors`}
+          >
+            {option.charAt(0).toUpperCase() + option.slice(1)}
+          </button>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <motion.div className="lg:col-span-2" variants={itemVariants}>
+          <div className={`p-6 rounded-xl shadow-lg dark:bg-gray-800 bg-white`}>
+            <h2 className="text-xl font-semibold mb-4">
+              Energy Generation & Minting
+            </h2>
+            <EnergyChart data={energyData[timeframe]} />
+          </div>
+        </motion.div>
+
+        <motion.div className="lg:col-span-1" variants={itemVariants}>
+          <TokenBalance
+            energyTokens={tokenBalances.energy}
+            carbonTokens={tokenBalances.carbon}
+          />
+        </motion.div>
+
+        <motion.div className="lg:col-span-3" variants={itemVariants}>
+          <div className={`p-6 rounded-xl shadow-lg dark:bg-gray-800 bg-white`}>
+            <h2 className="text-xl font-semibold mb-4">Environmental Impact</h2>
+            <CarbonImpact data={carbonData} />
+          </div>
+        </motion.div>
+      </div>
     </motion.div>
   );
 }

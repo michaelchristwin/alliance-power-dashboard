@@ -18,6 +18,8 @@ import { themeSessionResolver } from "~/.server/sessions";
 import "@rainbow-me/rainbowkit/styles.css";
 import Web3Provider from "./providers/web3-provider";
 import Navbar from "~/components/Navbar";
+import { SidebarInset, SidebarProvider } from "~/components/ui/sidebar";
+import { AppSidebar } from "~/components/app-sidebar";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const { getTheme } = await themeSessionResolver(request);
@@ -64,10 +66,14 @@ const HtmlLayout = ({ children }: { children: React.ReactNode }) => {
       </head>
       <body>
         <Web3Provider>
-          <Navbar />
-          {children}
+          <SidebarProvider>
+            <AppSidebar />
+            <SidebarInset className="flex h-screen bg-gray-50 dark:bg-gray-900">
+              <Navbar />
+              <main className="py-3 px-8">{children}</main>
+            </SidebarInset>
+          </SidebarProvider>
         </Web3Provider>
-
         <ScrollRestoration />
         <Scripts />
       </body>
