@@ -14,7 +14,7 @@ import CarbonImpact from "~/components/CarbonImpact";
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "New React Router App" },
+    { title: "Dashboard | Alliance Power Dashboard" },
     { name: "description", content: "Welcome to React Router!" },
   ];
 }

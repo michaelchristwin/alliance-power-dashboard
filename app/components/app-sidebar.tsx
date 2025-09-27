@@ -1,4 +1,11 @@
-import { ArrowLeftRight, ChartColumn, Coins, Leaf, User } from "lucide-react";
+import {
+  FaChartBar,
+  FaExchangeAlt,
+  FaCoins,
+  FaLeaf,
+  FaUserAlt,
+} from "react-icons/fa";
+import { useLocation } from "react-router";
 import {
   Sidebar,
   SidebarContent,
@@ -15,31 +22,32 @@ const items = [
   {
     title: "Dashboard",
     url: "/",
-    icon: ChartColumn,
+    icon: FaChartBar,
   },
   {
     title: "Tokens",
-    url: "#",
-    icon: ArrowLeftRight,
+    url: "/tokens",
+    icon: FaExchangeAlt,
   },
   {
     title: "Staking",
-    url: "#",
-    icon: Coins,
+    url: "/staking",
+    icon: FaCoins,
   },
   {
     title: "Impact",
-    url: "#",
-    icon: Leaf,
+    url: "/impact",
+    icon: FaLeaf,
   },
   {
     title: "Profile",
     url: "#",
-    icon: User,
+    icon: FaUserAlt,
   },
 ];
 
 export function AppSidebar() {
+  const location = useLocation();
   return (
     <Sidebar>
       <SidebarContent>
@@ -47,12 +55,16 @@ export function AppSidebar() {
           <SidebarGroupLabel>Alliance Power Dashboard</SidebarGroupLabel>
           <SidebarHeader className="h-[50px]"></SidebarHeader>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-y-[10px]">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
+                  <SidebarMenuButton
+                    asChild
+                    className="hover:bg-gray-100 text-[18px] rounded-none h-[45px] dark:hover:bg-gray-800 data-[active=true]:bg-green-50 data-[active=true]:text-green-600 data-[active=true]:dark:bg-green-900/30 data-[active=true]:dark:text-green-400 data-[active=true]:border-r-4 data-[active=true]:border-green-500"
+                    isActive={item.url === location.pathname}
+                  >
                     <a href={item.url}>
-                      <item.icon />
+                      <item.icon className="text-[18px]" />
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
