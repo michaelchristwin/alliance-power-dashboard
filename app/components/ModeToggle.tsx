@@ -16,8 +16,8 @@ export function ModeToggle() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon">
-          {theme === "dark" && <Sun />}
-          {theme === "light" && <Moon />}
+          {theme === "dark" && <Sun className="text-yellow-500" />}
+          {theme === "light" && <Moon className="text-black" />}
           {theme === ("system" as any) && <Monitor />}
           <span className="sr-only">Toggle theme</span>
         </Button>
