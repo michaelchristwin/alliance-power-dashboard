@@ -5,6 +5,7 @@ import {
   FaLeaf,
   FaUserAlt,
 } from "react-icons/fa";
+import { BiCoinStack } from "react-icons/bi";
 import { useLocation } from "react-router";
 import {
   Sidebar,
@@ -43,6 +44,11 @@ const items = [
     title: "Profile",
     url: "#",
     icon: FaUserAlt,
+  },
+  {
+    title: "Assets",
+    url: "/assets",
+    icon: BiCoinStack,
   },
 ];
 
