@@ -1,6 +1,13 @@
 import { useSearchParams } from "react-router";
 import { useState } from "react";
 
+export function meta() {
+  return [
+    { title: "Assets | Alliance Power Dashboard" },
+    { name: "description", content: "View activities of your m3ter" },
+  ];
+}
+
 function Assets() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [inputValue, setInputValue] = useState(
