@@ -1,5 +1,6 @@
 import { useSearchParams } from "react-router";
 import { useState } from "react";
+import { useTheme } from "remix-themes";
 
 export function meta() {
   return [
@@ -17,6 +18,7 @@ function Assets() {
   const m3terId = searchParams.get("m3terId");
   const colorLow = searchParams.get("colorLow");
   const colorHigh = searchParams.get("colorHigh");
+  const [theme, _] = useTheme();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -31,18 +33,20 @@ function Assets() {
   // Build iframe URLs only if m3terId exists
   let barChartUrl: string | null = null;
   let activitiesUrl: string | null = null;
-
+  console.log(theme);
   if (m3terId) {
     const barUrl = new URL("https://m3terscan-rr.vercel.app/iframes/bar-chart");
     barUrl.searchParams.set("m3terId", m3terId);
     if (colorLow) barUrl.searchParams.set("colorLow", colorLow);
     if (colorHigh) barUrl.searchParams.set("colorHigh", colorHigh);
+    barUrl.searchParams.set("colorScheme", theme as string);
     barChartUrl = barUrl.toString();
 
     const actUrl = new URL(
       "https://m3terscan-rr.vercel.app/iframes/activities"
     );
     actUrl.searchParams.set("m3terId", m3terId); // required
+    actUrl.searchParams.set("colorScheme", theme as string);
     activitiesUrl = actUrl.toString();
   }
 
@@ -51,7 +55,7 @@ function Assets() {
       {/* Search bar */}
       <input
         type="text"
-        className="border px-3 py-2 rounded w-74 mx-auto"
+        className="border px-3 py-2 rounded-[50px] w-84 mx-auto"
         placeholder="Enter m3terId..."
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
