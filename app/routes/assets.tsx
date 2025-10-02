@@ -33,13 +33,16 @@ function Assets() {
   // Build iframe URLs only if m3terId exists
   let barChartUrl: string | null = null;
   let activitiesUrl: string | null = null;
-  console.log(theme);
+  console.log(theme?.toString());
   if (m3terId) {
     const barUrl = new URL("https://m3terscan-rr.vercel.app/iframes/bar-chart");
     barUrl.searchParams.set("m3terId", m3terId);
-    if (colorLow) barUrl.searchParams.set("colorLow", colorLow);
-    if (colorHigh) barUrl.searchParams.set("colorHigh", colorHigh);
+    if (colorLow)
+      barUrl.searchParams.set("colorLow", encodeURIComponent(colorLow));
+    if (colorHigh)
+      barUrl.searchParams.set("colorHigh", encodeURIComponent(colorHigh));
     barUrl.searchParams.set("colorScheme", theme as string);
+    barUrl.searchParams.set("dark", encodeURIComponent("#1e2939"));
     barChartUrl = barUrl.toString();
 
     const actUrl = new URL(
@@ -47,6 +50,9 @@ function Assets() {
     );
     actUrl.searchParams.set("m3terId", m3terId); // required
     actUrl.searchParams.set("colorScheme", theme as string);
+    actUrl.searchParams.set("dark", encodeURIComponent("#1e2939"));
+    actUrl.searchParams.set("even", encodeURIComponent("#111827"));
+    actUrl.searchParams.set("odd", encodeURIComponent("#1e2939f4"));
     activitiesUrl = actUrl.toString();
   }
 
@@ -66,7 +72,7 @@ function Assets() {
       {barChartUrl && (
         <iframe
           src={barChartUrl}
-          className="w-full h-[600px] border"
+          className="w-full h-[494px] border"
           title="Bar Chart"
         />
       )}
@@ -74,7 +80,7 @@ function Assets() {
       {activitiesUrl && (
         <iframe
           src={activitiesUrl}
-          className="w-full h-[600px] border"
+          className="w-full h-[544.5px] border"
           title="Activities"
         />
       )}
