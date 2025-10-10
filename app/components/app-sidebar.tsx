@@ -18,6 +18,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "~/components/ui/sidebar";
+import { MdPayment } from "react-icons/md";
 
 const items = [
   {
@@ -49,6 +50,11 @@ const items = [
     title: "Assets",
     url: "/assets",
     icon: BiCoinStack,
+  },
+  {
+    title: "Payment",
+    url: "/payment",
+    icon: MdPayment,
   },
 ];
 
