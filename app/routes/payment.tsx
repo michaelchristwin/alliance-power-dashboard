@@ -20,10 +20,11 @@ export function meta() {
 function Payment() {
   return (
     <div className="flex w-full justify-center">
-      <Card className="md:min-w-[400px] min-w-[300px] h-[330px] dark:bg-gray-800 dark:text-white bg-white text-gray-800 mt-[40px]">
+      <Card className="md: h-[330px] dark:bg-gray-800 dark:text-white bg-white text-gray-800 mt-[40px]">
         <CardHeader className="hidden"></CardHeader>
         <CardContent className="w-full">
-          <Tabs defaultValue="fiat" className="w-[400px]">
+          
+          <Tabs defaultValue="fiat" className="md:w-[400px] w-[300px]">
             <TabsList className="w-full bg-background">
               <TabsTrigger value="fiat">Fiat</TabsTrigger>
               <TabsTrigger value="crypto">Crypto</TabsTrigger>

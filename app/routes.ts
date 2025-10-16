@@ -8,5 +8,6 @@ export default [
   route("impact", "routes/impact.tsx"),
   route("assets", "routes/assets.tsx"),
   route("payment", "routes/payment.tsx"),
+  route("profile", "routes/profile.tsx"),
   route("action/set-theme", "routes/action/set-theme.tsx"),
 ] satisfies RouteConfig;
