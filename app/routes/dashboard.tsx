@@ -1,11 +1,11 @@
 import type { Route } from "./+types/dashboard";
 import { motion, type Variants } from "motion/react";
-import { carbonData, tokenBalances, type Timeframe } from "~/data/mockData";
+import { type Timeframe } from "~/data/mockData";
 import StatsCards from "~/components/StatsCard";
 import { useEffect, useState } from "react";
 import EnergyChart from "~/components/EnergyChart";
-import TokenBalance from "~/components/TokenBalance";
-import CarbonImpact from "~/components/CarbonImpact";
+// import TokenBalance from "~/components/TokenBalance";
+// import CarbonImpact from "~/components/CarbonImpact";
 import { useQuery } from "@tanstack/react-query";
 import { GetDaily } from "~/queries";
 
