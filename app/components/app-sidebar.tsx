@@ -6,7 +6,7 @@ import {
   FaUserAlt,
 } from "react-icons/fa";
 import { BiCoinStack } from "react-icons/bi";
-import { useLocation } from "react-router";
+import { NavLink } from "react-router";
 import {
   Sidebar,
   SidebarContent,
@@ -23,7 +23,7 @@ import { MdPayment } from "react-icons/md";
 const items = [
   {
     title: "Dashboard",
-    url: "/",
+    url: "/dashboard",
     icon: FaChartBar,
   },
   {
@@ -59,7 +59,6 @@ const items = [
 ];
 
 export function AppSidebar() {
-  const location = useLocation();
   return (
     <Sidebar>
       <SidebarContent>
@@ -70,16 +69,19 @@ export function AppSidebar() {
             <SidebarMenu className="gap-y-[10px]">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    className="hover:bg-gray-100 text-[18px] rounded-none h-[45px] dark:hover:bg-gray-800 data-[active=true]:bg-green-50 data-[active=true]:text-green-600 data-[active=true]:dark:bg-green-900/30 data-[active=true]:dark:text-green-400 data-[active=true]:border-r-4 data-[active=true]:border-green-500"
-                    isActive={item.url === location.pathname}
-                  >
-                    <a href={item.url}>
-                      <item.icon className="text-[18px]" />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
+                  <NavLink to={item.url}>
+                    {({ isActive }) => (
+                      <SidebarMenuButton
+                        asChild
+                        className={`hover:bg-gray-100 text-[18px] rounded-none h-[45px] dark:hover:bg-gray-800 ${isActive ? "bg-green-50 text-green-600 dark:bg-green-900/30 dark:text-green-400 border-r-4 border-green-500" : ""}`}
+                      >
+                        <div className="w-full flex space-x-1.5">
+                          <item.icon className="text-[18px]" />
+                          <span>{item.title}</span>
+                        </div>
+                      </SidebarMenuButton>
+                    )}
+                  </NavLink>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

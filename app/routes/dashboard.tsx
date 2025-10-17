@@ -1,16 +1,13 @@
 import type { Route } from "./+types/dashboard";
 import { motion, type Variants } from "motion/react";
-import {
-  energyData,
-  carbonData,
-  tokenBalances,
-  type Timeframe,
-} from "~/data/mockData";
+import { carbonData, tokenBalances, type Timeframe } from "~/data/mockData";
 import StatsCards from "~/components/StatsCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EnergyChart from "~/components/EnergyChart";
 import TokenBalance from "~/components/TokenBalance";
 import CarbonImpact from "~/components/CarbonImpact";
+import { useQuery } from "@tanstack/react-query";
+import { GetDaily } from "~/queries";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -20,8 +17,26 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Dashboard() {
-  const [timeframe, setTimeframe] = useState<Timeframe>("monthly");
-
+  const [timeframe, setTimeframe] = useState<Timeframe>("daily");
+  const { data, isLoading } = useQuery({
+    queryKey: ["getDaily"],
+    queryFn: () =>
+      Promise.all([
+        GetDaily("11"),
+        GetDaily("12"),
+        GetDaily("13"),
+        GetDaily("14"),
+        GetDaily("15"),
+        GetDaily("16"),
+        GetDaily("17"),
+        GetDaily("18"),
+      ]),
+  });
+  useEffect(() => {
+    if (!isLoading) {
+      console.log("Data: ", data);
+    }
+  }, [isLoading]);
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -54,17 +69,47 @@ export default function Dashboard() {
 
       <motion.div className="mb-6" variants={itemVariants}>
         <StatsCards
-          energyGenerated={energyData[timeframe].generated.reduce(
-            (a, b) => a + b,
+          energyGenerated={data?.reduce(
+            (total: number, item: { hour: string; energy: number }[]) =>
+              total +
+              item.reduce(
+                (sum: number, d: { hour: string; energy: number }) =>
+                  sum + d.energy,
+                0
+              ),
             0
           )}
-          energyMinted={energyData[timeframe].minted.reduce((a, b) => a + b, 0)}
-          carbonSaved={carbonData.totalSaved}
-          tokenValue={tokenBalances.energy * 0.15 + tokenBalances.carbon * 0.28}
+          energyMinted={
+            0.06 *
+            data?.reduce(
+              (total: number, item: { hour: string; energy: number }[]) =>
+                total +
+                item.reduce(
+                  (sum: number, d: { hour: string; energy: number }) =>
+                    sum + d.energy,
+                  0
+                ),
+              0
+            )
+          }
+          carbonSaved={
+            0.36 *
+            data?.reduce(
+              (total: number, item: { hour: string; energy: number }[]) =>
+                total +
+                item.reduce(
+                  (sum: number, d: { hour: string; energy: number }) =>
+                    sum + d.energy,
+                  0
+                ),
+              0
+            )
+          }
+          tokenValue={0.17}
         />
       </motion.div>
       <div className="flex mb-4 space-x-4">
-        {["daily", "weekly", "monthly"].map((option) => (
+        {["daily"].map((option) => (
           <button
             key={option}
             onClick={() => setTimeframe(option as Timeframe)}
@@ -84,7 +129,7 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold mb-4">
               Energy Generation & Minting
             </h2>
-            <EnergyChart data={energyData[timeframe]} />
+            <EnergyChart data={data} />
           </div>
         </motion.div>
 

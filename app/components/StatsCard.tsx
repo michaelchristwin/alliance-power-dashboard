@@ -45,7 +45,7 @@ const StatsCards = ({
       color: "bg-amber-500 dark:bg-amber-600",
     },
     {
-      title: "Token Value",
+      title: "Energy Price",
       value: `$${formatter.format(tokenValue)}`,
       icon: FaDollarSign,
       color: "bg-purple-500 dark:bg-purple-600",

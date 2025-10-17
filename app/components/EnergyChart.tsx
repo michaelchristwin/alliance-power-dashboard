@@ -1,65 +1,58 @@
-import { Line } from "react-chartjs-2";
+import { motion } from "motion/react";
+import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
   Legend,
-  Filler,
   type ChartOptions,
+  type ChartData,
 } from "chart.js";
-import { motion } from "motion/react";
 
+// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
+  BarElement,
   Title,
   Tooltip,
-  Legend,
-  Filler
+  Legend
 );
+const colors = [
+  "rgba(16,185,129,0.8)", // emerald
+  "rgba(59,130,246,0.8)", // blue
+  "rgba(249,115,22,0.8)", // orange
+  "rgba(236,72,153,0.8)", // pink
+  "rgba(139,92,246,0.8)", // violet
+];
 
 const EnergyChart = ({ data }: { data: any }) => {
-  const chartData = {
-    labels: data.labels,
-    datasets: [
-      {
-        label: "Energy Generated (kWh)",
-        data: data.generated,
-        borderColor: "#10B981",
-        backgroundColor: "rgba(16, 185, 129, 0.1)",
-        borderWidth: 2,
-        tension: 0.4,
-        fill: true,
-      },
-      {
-        label: "Energy Minted (kWh)",
-        data: data.minted,
-        borderColor: "#60A5FA",
-        backgroundColor: "rgba(96, 165, 250, 0.1)",
-        borderWidth: 2,
-        tension: 0.4,
-        fill: true,
-      },
-    ],
+  const chartData: ChartData<"bar"> = {
+    labels: data[0].map((item: any) => item.hour),
+    datasets: data.map((item: any, i: number) => ({
+      label: `M3ter ${11 + i}`,
+      data: item.map((d: any) => d.energy),
+      backgroundColor: colors[i % colors.length],
+      borderColor: colors[i % colors.length].replace("0.8", "1"),
+      borderWidth: 1,
+      stack: "combined", // enable stacking
+    })),
   };
 
-  const chartOptions: ChartOptions<"line"> = {
+  const chartOptions: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "top" as const,
+        position: "top",
         labels: {
-          color: "rgb(75, 85, 99)", // text-gray-600
+          color: "rgb(75,85,99)", // text-gray-600
           font: {
             family: "'Inter', sans-serif",
-            size: 12,
+            size: 10,
           },
         },
       },
@@ -67,33 +60,38 @@ const EnergyChart = ({ data }: { data: any }) => {
         mode: "index",
         intersect: false,
         backgroundColor: "white",
-        titleColor: "rgb(31, 41, 55)", // text-gray-800
-        bodyColor: "rgb(75, 85, 99)", // text-gray-600
-        borderColor: "rgb(229, 231, 235)", // gray-200
+        titleColor: "rgb(31,41,55)",
+        bodyColor: "rgb(75,85,99)",
+        borderColor: "rgb(229,231,235)",
         borderWidth: 1,
+      },
+      title: {
+        display: false,
       },
     },
     scales: {
       x: {
+        stacked: true,
         grid: {
-          color: "rgba(0, 0, 0, 0.1)",
+          color: "rgba(0,0,0,0.05)",
         },
         ticks: {
-          color: "rgb(75, 85, 99)", // gray-600
+          color: "rgb(75,85,99)",
         },
       },
       y: {
+        stacked: true,
         grid: {
-          color: "rgba(0, 0, 0, 0.1)",
+          color: "rgba(0,0,0,0.05)",
         },
         ticks: {
-          color: "rgb(75, 85, 99)", // gray-600
+          color: "rgb(75,85,99)",
         },
         beginAtZero: true,
       },
     },
     animation: {
-      duration: 2000,
+      duration: 1000,
       easing: "easeOutQuart",
     },
   };
@@ -105,39 +103,7 @@ const EnergyChart = ({ data }: { data: any }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <Line
-        data={chartData}
-        options={{
-          ...chartOptions,
-          plugins: {
-            ...chartOptions.plugins,
-            legend: {
-              ...chartOptions.plugins?.legend,
-              labels: {
-                ...chartOptions.plugins?.legend?.labels,
-                color: "rgb(75,85,99)", // fallback
-              },
-            },
-            tooltip: {
-              ...chartOptions.plugins?.tooltip,
-              backgroundColor: "white",
-            },
-          },
-          scales: {
-            x: {
-              ...chartOptions.scales?.x,
-              grid: { color: "rgba(0,0,0,0.1)" },
-              ticks: { color: "rgb(75,85,99)" },
-            },
-            y: {
-              ...chartOptions.scales?.y,
-              grid: { color: "rgba(0,0,0,0.1)" },
-              ticks: { color: "rgb(75,85,99)" },
-            },
-          },
-        }}
-        className="[&_.legend-item]:dark:text-gray-200 [&_.tooltip]:dark:bg-gray-800 [&_.tooltip]:dark:text-gray-100"
-      />
+      <Bar data={chartData} options={chartOptions} />
     </motion.div>
   );
 };
