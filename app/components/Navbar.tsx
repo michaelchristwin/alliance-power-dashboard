@@ -1,16 +1,14 @@
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { motion } from "motion/react";
 import { FaBell, FaCog } from "react-icons/fa";
-import { useAccount, useDisconnect } from "wagmi";
 import { SidebarTrigger } from "./ui/sidebar";
 import { ModeToggle } from "./ModeToggle";
 
 const Navbar = () => {
-  const { address, isConnected } = useAccount();
-  const { disconnect } = useDisconnect();
-  const formatAddress = (address: string) => {
-    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
-  };
+  // const { address, isConnected } = useAccount();
+  // const { disconnect } = useDisconnect();
+  // const formatAddress = (address: string) => {
+  //   return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  // };
 
   return (
     <motion.nav
@@ -32,7 +30,7 @@ const Navbar = () => {
           <FaCog />
         </button>
 
-        {!isConnected ? (
+        {/* {!isConnected ? (
           <ConnectButton.Custom>
             {({ openConnectModal }) => (
               <button
@@ -56,7 +54,7 @@ const Navbar = () => {
               Disconnect
             </button>
           </div>
-        )}
+        )} */}
       </div>
     </motion.nav>
   );

@@ -1,8 +1,8 @@
 import {
   FaChartBar,
-  FaExchangeAlt,
-  FaCoins,
-  FaLeaf,
+  // FaExchangeAlt,
+  // FaCoins,
+  // FaLeaf,
   FaUserAlt,
 } from "react-icons/fa";
 import { BiCoinStack } from "react-icons/bi";
@@ -26,21 +26,21 @@ const items = [
     url: "/dashboard",
     icon: FaChartBar,
   },
-  {
-    title: "Tokens",
-    url: "/tokens",
-    icon: FaExchangeAlt,
-  },
-  {
-    title: "Staking",
-    url: "/staking",
-    icon: FaCoins,
-  },
-  {
-    title: "Impact",
-    url: "/impact",
-    icon: FaLeaf,
-  },
+  // {
+  //   title: "Tokens",
+  //   url: "/tokens",
+  //   icon: FaExchangeAlt,
+  // },
+  // {
+  //   title: "Staking",
+  //   url: "/staking",
+  //   icon: FaCoins,
+  // },
+  // {
+  //   title: "Impact",
+  //   url: "/impact",
+  //   icon: FaLeaf,
+  // },
   {
     title: "Profile",
     url: "/profile",

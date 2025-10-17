@@ -124,7 +124,7 @@ export default function Dashboard() {
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <motion.div className="lg:col-span-2" variants={itemVariants}>
+        <motion.div className="lg:col-span-3" variants={itemVariants}>
           <div className={`p-6 rounded-xl shadow-lg dark:bg-gray-800 bg-white`}>
             <h2 className="text-xl font-semibold mb-4">
               Energy Generation & Minting
@@ -133,19 +133,19 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        <motion.div className="lg:col-span-1" variants={itemVariants}>
+        {/* <motion.div className="lg:col-span-1" variants={itemVariants}>
           <TokenBalance
             energyTokens={tokenBalances.energy}
             carbonTokens={tokenBalances.carbon}
           />
-        </motion.div>
+        </motion.div> */}
 
-        <motion.div className="lg:col-span-3" variants={itemVariants}>
+        {/* <motion.div className="lg:col-span-3" variants={itemVariants}>
           <div className={`p-6 rounded-xl shadow-lg dark:bg-gray-800 bg-white`}>
             <h2 className="text-xl font-semibold mb-4">Environmental Impact</h2>
             <CarbonImpact data={carbonData} />
           </div>
-        </motion.div>
+        </motion.div> */}
       </div>
     </motion.div>
   );
