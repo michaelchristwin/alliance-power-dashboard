@@ -129,7 +129,7 @@ export default function Dashboard() {
             <h2 className="text-xl font-semibold mb-4">
               Energy Generation & Minting
             </h2>
-            <EnergyChart data={data} />
+            {data && <EnergyChart data={data} />}
           </div>
         </motion.div>
 

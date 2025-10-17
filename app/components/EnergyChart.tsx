@@ -29,7 +29,7 @@ const colors = [
   "rgba(139,92,246,0.8)", // violet
 ];
 
-const EnergyChart = ({ data }: { data: any }) => {
+const EnergyChart = ({ data }: { data: any[] }) => {
   const chartData: ChartData<"bar"> = {
     labels: data[0].map((item: any) => item.hour),
     datasets: data.map((item: any, i: number) => ({
