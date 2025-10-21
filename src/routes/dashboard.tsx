@@ -1,4 +1,5 @@
 import EnergyChart from "@/components/EnergyChart";
+import BarChartLoader from "@/components/loaders/barchart-loader";
 import StatLoader from "@/components/loaders/stat-loader";
 import StatsCards from "@/components/StatsCard";
 import type { Timeframe } from "@/data/mockData";
@@ -81,7 +82,7 @@ function Dashboard() {
             <h2 className="text-xl font-semibold mb-4">
               Energy Generation & Minting
             </h2>
-            <Suspense>
+            <Suspense fallback={<BarChartLoader />}>
               <EnergyChart />
             </Suspense>
           </div>
