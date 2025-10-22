@@ -29,6 +29,12 @@ const colors = [
   "rgba(249,115,22,0.8)", // orange
   "rgba(236,72,153,0.8)", // pink
   "rgba(139,92,246,0.8)", // violet
+  "rgba(34,197,94,0.8)", // green
+  "rgba(234,179,8,0.8)", // yellow
+  "rgba(239,68,68,0.8)", // red
+  "rgba(14,165,233,0.8)", // sky
+  "rgba(217,70,239,0.8)", // fuchsia
+  "rgba(107,114,128,0.8)", // gray
 ];
 
 const EnergyChart = () => {

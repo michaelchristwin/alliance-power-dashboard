@@ -32,6 +32,9 @@ export async function getDailyAP() {
     GetDaily("16"),
     GetDaily("17"),
     GetDaily("18"),
+    GetDaily("19"),
+    GetDaily("20"),
+    GetDaily("21"),
   ]);
   return data;
 }

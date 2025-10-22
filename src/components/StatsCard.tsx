@@ -1,7 +1,8 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import { motion, type Variants } from "motion/react";
-import { FaSolarPanel, FaCoins, FaLeaf, FaDollarSign } from "react-icons/fa";
+import { GiElectric } from "react-icons/gi";
+import { FaSolarPanel, FaLeaf, FaDollarSign } from "react-icons/fa";
 
 const formatter = new Intl.NumberFormat("en-US");
 
@@ -29,17 +30,6 @@ const StatsCards = () => {
       ),
     0
   );
-  const energyMinted =
-    0.06 *
-    data?.reduce(
-      (total: number, item: { hour: string; energy: number }[]) =>
-        total +
-        item.reduce(
-          (sum: number, d: { hour: string; energy: number }) => sum + d.energy,
-          0
-        ),
-      0
-    );
 
   const carbonSaved =
     0.36 *
@@ -62,9 +52,9 @@ const StatsCards = () => {
       color: "bg-blue-500 dark:bg-blue-600",
     },
     {
-      title: "Energy Minted",
-      value: `${formatter.format(energyMinted)} kWh`,
-      icon: FaCoins,
+      title: "Total M3ters",
+      value: `11 devices`,
+      icon: GiElectric,
       color: "bg-green-500 dark:bg-green-600",
     },
     {
@@ -74,8 +64,8 @@ const StatsCards = () => {
       color: "bg-amber-500 dark:bg-amber-600",
     },
     {
-      title: "Energy Price",
-      value: `$${formatter.format(tokenValue)}`,
+      title: "Revenue",
+      value: `$${formatter.format(tokenValue * energyGenerated)}`,
       icon: FaDollarSign,
       color: "bg-purple-500 dark:bg-purple-600",
     },

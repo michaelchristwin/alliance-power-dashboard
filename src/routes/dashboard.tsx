@@ -62,7 +62,7 @@ function Dashboard() {
         </Suspense>
       </motion.div>
       <div className="flex mb-4 space-x-4">
-        {["monthly", "weekly", "daily"].map((option) => (
+        {["daily"].map((option) => (
           <button
             key={option}
             onClick={() => setTimeframe(option as Timeframe)}
