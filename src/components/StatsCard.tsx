@@ -47,7 +47,7 @@ const StatsCards = () => {
   const stats = [
     {
       title: "Energy Generated",
-      value: `${formatter.format(totalEnergy.data)} kWh`,
+      value: `${formatter.format(totalEnergy.data)} mWh`,
       icon: FaSolarPanel,
       color: "bg-blue-500 dark:bg-blue-600",
     },
