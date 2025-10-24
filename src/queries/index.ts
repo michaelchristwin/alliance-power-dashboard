@@ -1,3 +1,9 @@
+import { abi } from "@/config/abi";
+import { rollupContract } from "@/config/rollup";
+import { config } from "@/config/wagmi";
+import { readContract } from "@wagmi/core";
+import { hexToNumber } from "viem";
+
 export async function GetMonthly(m3terId: string) {
   const year = new Date().getFullYear();
   const months = Array.from({ length: 12 }, (_, i) => i); // 0–11 inclusive
@@ -37,4 +43,25 @@ export async function getDailyAP() {
     GetDaily("21"),
   ]);
   return data;
+}
+
+export async function getTotalEnergy() {
+  const m3terIds = Array.from({ length: 11 }, (_, i) => 11 + i);
+
+  const results = await Promise.all(
+    m3terIds.map(async (id) => {
+      const accountHex = await readContract(config, {
+        abi,
+        address: rollupContract.address,
+        functionName: "account",
+        args: [BigInt(id)],
+      });
+      console.log(accountHex);
+      const account = hexToNumber(accountHex as `0x${string}`);
+      return account / 1_000_000;
+    })
+  );
+
+  const totalAccount = results.reduce((sum, val) => sum + val, 0);
+  return totalAccount;
 }

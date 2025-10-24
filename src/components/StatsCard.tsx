@@ -1,8 +1,9 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQueries } from "@tanstack/react-query";
 import { useRouteContext } from "@tanstack/react-router";
 import { motion, type Variants } from "motion/react";
 import { GiElectric } from "react-icons/gi";
 import { FaSolarPanel, FaLeaf, FaDollarSign } from "react-icons/fa";
+import { getTotalEnergy } from "@/queries";
 
 const formatter = new Intl.NumberFormat("en-US");
 
@@ -20,20 +21,19 @@ const cardVariants: Variants = {
 
 const StatsCards = () => {
   const { getDailyQueryOptions } = useRouteContext({ from: "/dashboard" });
-  const { data } = useSuspenseQuery(getDailyQueryOptions);
-  const energyGenerated = data?.reduce(
-    (total: number, item: { hour: string; energy: number }[]) =>
-      total +
-      item.reduce(
-        (sum: number, d: { hour: string; energy: number }) => sum + d.energy,
-        0
-      ),
-    0
-  );
+  const [dailyData, totalEnergy] = useSuspenseQueries({
+    queries: [
+      { ...getDailyQueryOptions },
+      {
+        queryKey: ["getTotalEnergy"],
+        queryFn: getTotalEnergy,
+      },
+    ],
+  });
 
   const carbonSaved =
     0.36 *
-    data?.reduce(
+    dailyData.data?.reduce(
       (total: number, item: { hour: string; energy: number }[]) =>
         total +
         item.reduce(
@@ -47,7 +47,7 @@ const StatsCards = () => {
   const stats = [
     {
       title: "Energy Generated",
-      value: `${formatter.format(energyGenerated)} kWh`,
+      value: `${formatter.format(totalEnergy.data)} kWh`,
       icon: FaSolarPanel,
       color: "bg-blue-500 dark:bg-blue-600",
     },
@@ -65,7 +65,7 @@ const StatsCards = () => {
     },
     {
       title: "Revenue",
-      value: `$${formatter.format(tokenValue * energyGenerated)}`,
+      value: `$${formatter.format(tokenValue * totalEnergy.data)}`,
       icon: FaDollarSign,
       color: "bg-purple-500 dark:bg-purple-600",
     },
