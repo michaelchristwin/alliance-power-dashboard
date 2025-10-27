@@ -21,7 +21,7 @@ const cardVariants: Variants = {
 
 const StatsCards = () => {
   const { getDailyQueryOptions } = useRouteContext({ from: "/dashboard" });
-  const [dailyData, totalEnergy] = useSuspenseQueries({
+  const [dailyData, energyData] = useSuspenseQueries({
     queries: [
       { ...getDailyQueryOptions },
       {
@@ -42,12 +42,12 @@ const StatsCards = () => {
         ),
       0
     );
-
+  const totalEnergy = energyData.data / 1000;
   const tokenValue = 0.17;
   const stats = [
     {
       title: "Energy Generated",
-      value: `${formatter.format(totalEnergy.data)} mWh`,
+      value: `${formatter.format(totalEnergy)} MWh`,
       icon: FaSolarPanel,
       color: "bg-blue-500 dark:bg-blue-600",
     },
@@ -65,7 +65,7 @@ const StatsCards = () => {
     },
     {
       title: "Revenue",
-      value: `$${formatter.format(tokenValue * totalEnergy.data)}`,
+      value: `$${formatter.format(tokenValue * totalEnergy)}`,
       icon: FaDollarSign,
       color: "bg-purple-500 dark:bg-purple-600",
     },
