@@ -65,7 +65,7 @@ const StatsCards = () => {
     },
     {
       title: "Revenue",
-      value: `$${formatter.format(tokenValue * totalEnergy)}`,
+      value: `$${formatter.format(tokenValue * energyData.data)}`,
       icon: FaDollarSign,
       color: "bg-purple-500 dark:bg-purple-600",
     },
