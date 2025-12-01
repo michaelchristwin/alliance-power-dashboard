@@ -11,7 +11,7 @@ export async function GetMonthly(m3terId: string) {
   const responses = await Promise.all(
     months.map(async (month) => {
       const response = await fetch(
-        `http://localhost:8080/m3ter/${m3terId}/monthly?year=${year}&month=${month}`
+        `http://localhost:8080/m3ter/${m3terId}/months/${year}/${month}`
       );
       return response.json();
     })
