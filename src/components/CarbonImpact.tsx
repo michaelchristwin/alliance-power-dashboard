@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { motion, type Variants } from "motion/react";
 import { FaTree, FaCar, FaHome } from "react-icons/fa";
 

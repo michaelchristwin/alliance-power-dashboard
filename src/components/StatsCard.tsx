@@ -33,15 +33,13 @@ const StatsCards = () => {
 
   const carbonSaved =
     0.36 *
-    dailyData.data?.reduce(
-      (total: number, item: { hour: string; energy: number }[]) =>
-        total +
-        item.reduce(
-          (sum: number, d: { hour: string; energy: number }) => sum + d.energy,
-          0
-        ),
-      0
-    );
+    dailyData.data.reduce((grandTotal, dayArray) => {
+      return (
+        grandTotal +
+        dayArray.reduce((dayTotal, entry) => dayTotal + entry.total_energy, 0)
+      );
+    }, 0);
+
   const totalEnergy = energyData.data / 1000;
   const tokenValue = 0.17;
   const stats = [

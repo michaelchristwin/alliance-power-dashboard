@@ -5,9 +5,10 @@ import * as TanstackQuery from "./integrations/root-provider";
 
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
+import { getContext } from "./integrations/client";
 
 // Create a new router instance
-const rqContext = TanstackQuery.getContext();
+const rqContext = getContext();
 const router = createRouter({
   routeTree,
   context: { ...rqContext },

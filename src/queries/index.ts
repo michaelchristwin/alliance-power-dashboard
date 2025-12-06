@@ -1,6 +1,9 @@
+import { getDailyM3TerM3TerIdDailyGetOptions } from "@/api-client/@tanstack/react-query.gen";
+import { createClient } from "@/api-client/client";
 import { abi } from "@/config/abi";
 import { rollupContract } from "@/config/rollup";
 import { config } from "@/config/wagmi";
+import { getContext } from "@/integrations/client";
 import { readContract } from "@wagmi/core";
 import { hexToNumber } from "viem";
 
@@ -21,10 +24,14 @@ export async function GetMonthly(m3terId: string) {
 }
 
 export async function GetDaily(m3terId: string) {
-  const response = await fetch(
-    `https://m3terscan-api.onrender.com/m3ter/${m3terId}/daily`
-  );
-  const data = await response.json();
+  const { queryClient } = getContext();
+  const data = await queryClient.fetchQuery({
+    ...getDailyM3TerM3TerIdDailyGetOptions({
+      client: m3terscanClient,
+      path: { m3ter_id: Number(m3terId) },
+    }),
+  });
+
   return data;
 }
 
@@ -65,3 +72,7 @@ export async function getTotalEnergy() {
   const totalAccount = results.reduce((sum, val) => sum + val, 0);
   return totalAccount;
 }
+
+export const m3terscanClient = createClient({
+  baseUrl: import.meta.env.VITE_API_URL,
+});

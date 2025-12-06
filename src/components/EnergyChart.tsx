@@ -41,10 +41,16 @@ const EnergyChart = () => {
   const { getDailyQueryOptions } = useRouteContext({ from: "/dashboard" });
   const { data } = useSuspenseQuery(getDailyQueryOptions);
   const chartData: ChartData<"bar"> = {
-    labels: data[0].map((item: any) => item.hour),
-    datasets: data.map((item: any, i: number) => ({
+    labels: data[0].map((item) =>
+      new Date(item.hour_start_utc).toLocaleTimeString([], {
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    ),
+    datasets: data.map((item, i) => ({
       label: `M3ter ${11 + i}`,
-      data: item.map((d: any) => d.energy),
+      data: item.map((d) => d.total_energy),
       backgroundColor: colors[i % colors.length],
       borderColor: colors[i % colors.length].replace("0.8", "1"),
       borderWidth: 1,
