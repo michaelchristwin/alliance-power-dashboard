@@ -63,7 +63,7 @@ export async function getTotalEnergy() {
         functionName: "account",
         args: [BigInt(id)],
       });
-      console.log(accountHex);
+
       const account = hexToNumber(accountHex as `0x${string}`);
       return account / 1_000_000;
     })
