@@ -25,7 +25,7 @@ const StatsCards = () => {
   });
 
   const totalEnergy = energyData / 1000;
-  const carbonSaved = 0.36 * totalEnergy;
+  const carbonSaved = 0.36 * energyData;
   const tokenValue = 0.17;
   const stats = [
     {
