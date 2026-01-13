@@ -1,4 +1,3 @@
-import { useTheme } from "@/components/theme-provider";
 import {
   createFileRoute,
   useNavigate,
@@ -6,6 +5,13 @@ import {
 } from "@tanstack/react-router";
 import { z } from "zod";
 import { useState, useEffect } from "react";
+import { DailyBarChart, ActivitiesTable } from "m3terscan-components";
+import { useQuery } from "wagmi/query";
+import { m3terscanClient } from "@/queries";
+import {
+  getActivitiesM3TerM3TerIdActivitiesGetOptions,
+  getDailyM3TerM3TerIdDailyGetOptions,
+} from "@/api-client/@tanstack/react-query.gen";
 
 const searchSchema = z.object({
   m3terId: z.coerce.number().optional(),
@@ -21,7 +27,6 @@ export const Route = createFileRoute("/assets")({
 function Assets() {
   const search = useSearch({ from: "/assets" });
   const navigate = useNavigate({ from: "/assets" });
-  const { theme } = useTheme();
 
   const [inputValue, setInputValue] = useState(
     search.m3terId?.toString() ?? ""
@@ -43,59 +48,56 @@ function Assets() {
     }
   };
 
-  const { m3terId, colorLow, colorHigh } = search;
+  const { m3terId } = search;
 
-  let barChartUrl: string | null = null;
-  let activitiesUrl: string | null = null;
+  const { data, isError, isLoading } = useQuery({
+    ...getDailyM3TerM3TerIdDailyGetOptions({
+      client: m3terscanClient,
+      path: {
+        m3ter_id: m3terId!,
+      },
+    }),
+    enabled: !!m3terId,
+  });
 
-  if (m3terId) {
-    const barUrl = new URL("https://m3terscan-rr.vercel.app/iframes/bar-chart");
-    barUrl.searchParams.set("m3terId", m3terId.toString());
-    if (colorLow) barUrl.searchParams.set("colorLow", colorLow);
-    if (colorHigh) barUrl.searchParams.set("colorHigh", colorHigh);
-    barUrl.searchParams.set("colorScheme", theme as string);
-    barUrl.searchParams.set("dark", "#1e2939");
-    barChartUrl = barUrl.toString();
-
-    const actUrl = new URL(
-      "https://m3terscan-rr.vercel.app/iframes/activities"
-    );
-    actUrl.searchParams.set("m3terId", m3terId.toString());
-    actUrl.searchParams.set("colorScheme", theme as string);
-    actUrl.searchParams.set("dark", "#1e2939");
-    actUrl.searchParams.set("even", "#111827");
-    actUrl.searchParams.set("odd", "#1e2939f4");
-    activitiesUrl = actUrl.toString();
-  }
-
+  const {
+    data: activitesData,
+    isError: activitesError,
+    isLoading: activitiesLoading,
+  } = useQuery({
+    ...getActivitiesM3TerM3TerIdActivitiesGetOptions({
+      client: m3terscanClient,
+      path: {
+        m3ter_id: m3terId!,
+      },
+    }),
+    enabled: !!m3terId,
+  });
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <title>Assets | Alliance Power Dashboard</title>
       <meta name="description" content="View activities of your m3ter." />
       <input
         type="text"
-        className="border px-3 py-2 rounded-[50px] w-84 mx-auto"
-        placeholder="Enter m3terId..."
+        className="border px-3 py-2 rounded-3xl w-84 mx-auto outline-0 border-neutral-500"
+        placeholder="Enter meter ID"
         value={inputValue}
         onChange={(e) => setInputValue(e.target.value)}
         onKeyDown={handleKeyDown}
       />
 
-      {barChartUrl && (
-        <iframe
-          src={barChartUrl}
-          className="w-full h-[494px] border"
-          title="Bar Chart"
-        />
-      )}
+      <div className="w-full h-[500px]">
+        <DailyBarChart data={data} error={isError} isLoading={isLoading} />
+      </div>
 
-      {activitiesUrl && (
-        <iframe
-          src={activitiesUrl}
-          className="w-full h-[544.5px] border"
-          title="Activities"
+      <div className="w-full min-h-[500px]">
+        <ActivitiesTable
+          headerColor="#05df72"
+          data={activitesData}
+          error={activitesError}
+          isLoading={activitiesLoading}
         />
-      )}
+      </div>
     </div>
   );
 }
