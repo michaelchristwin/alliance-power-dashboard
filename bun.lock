@@ -21,7 +21,7 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "lucide-react": "^0.546.0",
-        "m3terscan-components": "^1.0.1",
+        "m3terscan-components": "^1.0.2",
         "motion": "^12.23.24",
         "react": "^19.1.1",
         "react-chartjs-2": "^5.3.0",
@@ -1025,7 +1025,7 @@
 
     "lucide-react": ["lucide-react@0.546.0", "", { "peerDependencies": { "react": "^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0" } }, "sha512-Z94u6fKT43lKeYHiVyvyR8fT7pwCzDu7RyMPpTvh054+xahSgj4HFQ+NmflvzdXsoAjYGdCguGaFKYuvq0ThCQ=="],
 
-    "m3terscan-components": ["m3terscan-components@1.0.1", "", { "peerDependencies": { "chart.js": "^4.5.1", "date-fns": "^4.1.0", "react": "^19.2.0", "react-chartjs-2": "^5.3.1", "react-dom": "^19.2.0", "typescript": "^5.9.3" } }, "sha512-8OagVULgLxG2mafESJQo+MzV5EfpzX+qCp0flFUxpvd0jKtLtREgViaa6ACItsTchQ8tmbJ00/nzxrqIupaKEg=="],
+    "m3terscan-components": ["m3terscan-components@1.0.2", "", { "peerDependencies": { "chart.js": "^4.5.1", "date-fns": "^4.1.0", "react": "^19.2.0", "react-chartjs-2": "^5.3.1", "react-dom": "^19.2.0", "typescript": "^5.9.3" } }, "sha512-0dPlthg3UjqCd+Vf3mFgpmDjvgcZuiKRl2Bg/qSMMZp6D7MujfLMybr587T6Lon9dDtrlMyOIVBE0gsTtBbzPg=="],
 
     "magic-string": ["magic-string@0.30.19", "", { "dependencies": { "@jridgewell/sourcemap-codec": "^1.5.5" } }, "sha512-2N21sPY9Ws53PZvsEpVtNuSW+ScYbQdp4b9qUaL+9QkHUrGFKo56Lg9Emg5s9V/qrtNBmiR01sYhUOwu3H+VOw=="],
 
