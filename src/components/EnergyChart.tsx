@@ -1,15 +1,11 @@
 import { motion } from "motion/react";
 import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  type ChartOptions,
-  type ChartData,
-} from "chart.js/auto";
+import { type ChartOptions, type ChartData } from "chart.js/auto";
 import { useRouteContext } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 // Register Chart.js components
-ChartJS.register();
+
 const colors = [
   "rgba(16,185,129,0.8)", // emerald
   "rgba(59,130,246,0.8)", // blue
