@@ -87,20 +87,6 @@ function Dashboard() {
             </Suspense>
           </div>
         </motion.div>
-
-        {/* <motion.div className="lg:col-span-1" variants={itemVariants}>
-          <TokenBalance
-            energyTokens={tokenBalances.energy}
-            carbonTokens={tokenBalances.carbon}
-          />
-        </motion.div> */}
-
-        {/* <motion.div className="lg:col-span-3" variants={itemVariants}>
-          <div className={`p-6 rounded-xl shadow-lg dark:bg-gray-800 bg-white`}>
-            <h2 className="text-xl font-semibold mb-4">Environmental Impact</h2>
-            <CarbonImpact data={carbonData} />
-          </div>
-        </motion.div> */}
       </div>
     </motion.div>
   );
