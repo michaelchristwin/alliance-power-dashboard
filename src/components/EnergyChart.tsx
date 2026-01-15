@@ -1,7 +1,7 @@
+import "chart.js/auto";
 import { motion } from "motion/react";
 import { Bar } from "react-chartjs-2";
-import "chart.js/auto";
-import { type ChartOptions, type ChartData } from "chart.js/auto";
+import type { ChartOptions, ChartData } from "chart.js/auto";
 import { useRouteContext } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
