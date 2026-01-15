@@ -1,4 +1,3 @@
-import "chart.js/auto";
 import { motion } from "motion/react";
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions, ChartData } from "chart.js/auto";
