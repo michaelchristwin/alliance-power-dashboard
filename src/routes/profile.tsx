@@ -10,6 +10,9 @@ export const Route = createFileRoute("/profile")({
   validateSearch: (search: Record<string, unknown>) => ({
     m3terId: (search.m3terId as string) ?? "",
   }),
+  head: () => ({
+    meta: [{ title: "Profile - Alliance Power Dashboard" }],
+  }),
 });
 
 function RouteComponent() {
@@ -35,14 +38,12 @@ function RouteComponent() {
   const m3terId = search.m3terId;
   const mapFrameUrl = m3terId
     ? `https://m3terscan-rr.vercel.app/iframes/map?m3terId=${encodeURIComponent(
-        m3terId
+        m3terId,
       )}`
     : null;
 
   return (
     <div className="w-full h-full flex flex-col gap-4">
-      <title>Profile | Alliance Power Dashboard</title>
-      <meta name="description" content="" />
       <input
         type="text"
         className="border px-3 py-2 rounded-[50px] w-84 mx-auto"

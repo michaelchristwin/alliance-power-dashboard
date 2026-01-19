@@ -1,24 +1,12 @@
-import EnergyChart from "@/components/EnergyChart";
-import BarChartLoader from "@/components/loaders/barchart-loader";
-import StatLoader from "@/components/loaders/stat-loader";
-import StatsCards from "@/components/StatsCard";
-import type { Timeframe } from "@/data/mockData";
-import { getDailyAP } from "@/queries";
 import { createFileRoute } from "@tanstack/react-router";
+import { locationData, type LocationKey } from "@/data/locations";
+import { GetDaily } from "@/queries";
 import { motion, type Variants } from "motion/react";
 import { Suspense, useState } from "react";
-
-export const Route = createFileRoute("/dashboard")({
-  component: Dashboard,
-  beforeLoad() {
-    return {
-      getDailyQueryOptions: { queryKey: ["getDaily"], queryFn: getDailyAP },
-    };
-  },
-  loader: async ({ context: { getDailyQueryOptions, queryClient } }) => {
-    queryClient.prefetchQuery(getDailyQueryOptions);
-  },
-});
+import BarChartLoader from "@/components/loaders/barchart-loader";
+import type { Timeframe } from "@/data/mockData";
+import EnergyChart from "@/components/EnergyChart";
+import Statistics2 from "@/components/Statistics2";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -40,9 +28,30 @@ const itemVariants: Variants = {
   },
 };
 
-function Dashboard() {
-  const [timeframe, setTimeframe] = useState<Timeframe>("daily");
+export const Route = createFileRoute("/dashboard/$location")({
+  component: RouteComponent,
+  loader: ({ params }) => {
+    if (!(params.location in locationData)) {
+      throw new Error("Invalid location");
+    }
+    const location = params.location as LocationKey;
+    const m3terIds = [...locationData[location].meterIds];
+    const title = locationData[location].title;
+    return {
+      location,
+      m3terIds,
+      title,
+    };
+  },
+  head: ({ loaderData }) => ({
+    meta: [{ title: `${loaderData?.title} Dashboard` }],
+  }),
+});
 
+function RouteComponent() {
+  const { location, title, m3terIds } = Route.useLoaderData();
+
+  const [timeframe, setTimeframe] = useState<Timeframe>("daily");
   return (
     <motion.div
       className="text-center"
@@ -50,16 +59,13 @@ function Dashboard() {
       animate="visible"
       variants={containerVariants}
     >
-      <title>Dashboard | Alliance Power</title>
       <meta name="description" content="Welcome to Alliance Power Dashboard!" />
       <motion.h1 className="text-3xl font-bold mb-6" variants={itemVariants}>
-        Energy Dashboard
+        {title} Usage Stats
       </motion.h1>
 
       <motion.div className="mb-6" variants={itemVariants}>
-        <Suspense fallback={<StatLoader />}>
-          <StatsCards />
-        </Suspense>
+        <Statistics2 m3terIds={m3terIds} />
       </motion.div>
       <div className="flex mb-4 space-x-4">
         {["daily"].map((option) => (
@@ -83,7 +89,12 @@ function Dashboard() {
               Energy Generation & Minting
             </h2>
             <Suspense fallback={<BarChartLoader />}>
-              <EnergyChart />
+              <EnergyChart
+                queryOptions={{
+                  queryKey: ["getDaily", location],
+                  queryFn: () => GetDaily(m3terIds),
+                }}
+              />
             </Suspense>
           </div>
         </motion.div>

@@ -1,8 +1,9 @@
 import { motion } from "motion/react";
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions, ChartData } from "chart.js/auto";
-import { useRouteContext } from "@tanstack/react-router";
+
 import { useSuspenseQuery } from "@tanstack/react-query";
+import type { DailyResponse } from "@/api-client";
 
 const colors = [
   "rgba(16,185,129,0.8)", // emerald
@@ -17,17 +18,19 @@ const colors = [
   "rgba(217,70,239,0.8)", // fuchsia
   "rgba(107,114,128,0.8)", // gray
 ];
-
-const EnergyChart = () => {
-  const { getDailyQueryOptions } = useRouteContext({ from: "/dashboard" });
-  const { data } = useSuspenseQuery(getDailyQueryOptions);
+type EnergyChartProps = {
+  queryKey: string[];
+  queryFn: () => Promise<DailyResponse[][]>;
+};
+const EnergyChart = ({ queryOptions }: { queryOptions: EnergyChartProps }) => {
+  const { data } = useSuspenseQuery(queryOptions);
   const chartData: ChartData<"bar"> = {
     labels: data[0].map((item) =>
       new Date(item.hour_start_utc).toLocaleTimeString([], {
         hour12: false,
         hour: "2-digit",
         minute: "2-digit",
-      })
+      }),
     ),
     datasets: data.map((item, i) => ({
       label: `M3ter ${11 + i}`,

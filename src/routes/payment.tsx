@@ -10,14 +10,20 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/payment")({
   component: RouteComponent,
+  head: () => ({
+    meta: [
+      { title: "Payment - Alliance Power Dashboard" },
+      {
+        name: "description",
+        content: "Recharge your meter, settle your bills, purchase power here.",
+      },
+    ],
+  }),
 });
 
 function RouteComponent() {
   return (
     <div className="flex w-full justify-center">
-      <title>Payment | Alliance Power Dashboard</title>
-      <meta name="description" content="Make power purchases here." />
-
       <Card className="md: h-[330px] dark:bg-gray-800 dark:text-white bg-white text-gray-800 mt-[40px]">
         <CardHeader className="hidden"></CardHeader>
         <CardContent className="w-full">

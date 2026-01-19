@@ -11,9 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PaymentRouteImport } from './routes/payment'
-import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as AssetsRouteImport } from './routes/assets'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as DashboardLocationRouteImport } from './routes/dashboard/$location'
 
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
@@ -23,11 +24,6 @@ const ProfileRoute = ProfileRouteImport.update({
 const PaymentRoute = PaymentRouteImport.update({
   id: '/payment',
   path: '/payment',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AssetsRoute = AssetsRouteImport.update({
@@ -40,43 +36,76 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardLocationRoute = DashboardLocationRouteImport.update({
+  id: '/dashboard/$location',
+  path: '/dashboard/$location',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assets': typeof AssetsRoute
-  '/dashboard': typeof DashboardRoute
   '/payment': typeof PaymentRoute
   '/profile': typeof ProfileRoute
+  '/dashboard/$location': typeof DashboardLocationRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assets': typeof AssetsRoute
-  '/dashboard': typeof DashboardRoute
   '/payment': typeof PaymentRoute
   '/profile': typeof ProfileRoute
+  '/dashboard/$location': typeof DashboardLocationRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/assets': typeof AssetsRoute
-  '/dashboard': typeof DashboardRoute
   '/payment': typeof PaymentRoute
   '/profile': typeof ProfileRoute
+  '/dashboard/$location': typeof DashboardLocationRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/assets' | '/dashboard' | '/payment' | '/profile'
+  fullPaths:
+    | '/'
+    | '/assets'
+    | '/payment'
+    | '/profile'
+    | '/dashboard/$location'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/assets' | '/dashboard' | '/payment' | '/profile'
-  id: '__root__' | '/' | '/assets' | '/dashboard' | '/payment' | '/profile'
+  to:
+    | '/'
+    | '/assets'
+    | '/payment'
+    | '/profile'
+    | '/dashboard/$location'
+    | '/dashboard'
+  id:
+    | '__root__'
+    | '/'
+    | '/assets'
+    | '/payment'
+    | '/profile'
+    | '/dashboard/$location'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AssetsRoute: typeof AssetsRoute
-  DashboardRoute: typeof DashboardRoute
   PaymentRoute: typeof PaymentRoute
   ProfileRoute: typeof ProfileRoute
+  DashboardLocationRoute: typeof DashboardLocationRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -95,13 +124,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PaymentRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/assets': {
       id: '/assets'
       path: '/assets'
@@ -116,16 +138,40 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/$location': {
+      id: '/dashboard/$location'
+      path: '/dashboard/$location'
+      fullPath: '/dashboard/$location'
+      preLoaderRoute: typeof DashboardLocationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AssetsRoute: AssetsRoute,
-  DashboardRoute: DashboardRoute,
   PaymentRoute: PaymentRoute,
   ProfileRoute: ProfileRoute,
+  DashboardLocationRoute: DashboardLocationRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

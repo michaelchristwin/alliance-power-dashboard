@@ -22,6 +22,12 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/assets")({
   component: Assets,
   validateSearch: searchSchema,
+  head: () => ({
+    meta: [
+      { title: "Assets - Alliance Power Dashboard" },
+      { name: "description", content: "View activities of your m3ter." },
+    ],
+  }),
 });
 
 function Assets() {
@@ -29,7 +35,7 @@ function Assets() {
   const navigate = useNavigate({ from: "/assets" });
 
   const [inputValue, setInputValue] = useState(
-    search.m3terId?.toString() ?? ""
+    search.m3terId?.toString() ?? "",
   );
 
   useEffect(() => {
@@ -75,8 +81,6 @@ function Assets() {
   });
   return (
     <div className="w-full h-full flex flex-col gap-4">
-      <title>Assets | Alliance Power Dashboard</title>
-      <meta name="description" content="View activities of your m3ter." />
       <input
         type="text"
         className="border px-3 py-2 rounded-3xl w-84 mx-auto outline-0 border-neutral-500"

@@ -1,5 +1,4 @@
 import { Moon, Sun } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,10 +6,23 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useTheme } from "@/components/theme-provider";
+import { applyTheme, setColorScheme, type Color } from "@/lib/theme";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "@tanstack/react-router";
 
 export function ModeToggle() {
-  const { setTheme } = useTheme();
+  const router = useRouter();
+  const mutation = useMutation({
+    mutationFn: (scheme: Color) => {
+      return setColorScheme({ data: scheme });
+    },
+    onMutate: (newScheme) => {
+      applyTheme(newScheme);
+    },
+    onSuccess: () => {
+      router.invalidate();
+    },
+  });
 
   return (
     <DropdownMenu>
@@ -22,13 +34,13 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>
+        <DropdownMenuItem onClick={() => mutation.mutate("light")}>
           Light
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>
+        <DropdownMenuItem onClick={() => mutation.mutate("dark")}>
           Dark
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>
+        <DropdownMenuItem onClick={() => mutation.mutate("system")}>
           System
         </DropdownMenuItem>
       </DropdownMenuContent>
