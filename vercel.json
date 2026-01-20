@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/exportPagePdf.ts": {
-      "memory": 2048
-    }
-  }
-}

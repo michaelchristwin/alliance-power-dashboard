@@ -6,6 +6,9 @@ import {} from "date-fns";
 import { useServerFn } from "@tanstack/react-start";
 import { getServerAccounts } from "@/queries";
 import { useQuery } from "@tanstack/react-query";
+import { useReadContracts } from "wagmi";
+import { rollupContract } from "@/config/rollup";
+import { hexToNumber, type Address } from "viem";
 
 const formatter = new Intl.NumberFormat("en-US");
 
@@ -22,6 +25,15 @@ const cardVariants: Variants = {
 };
 
 function Statistics2({ m3terIds }: { m3terIds: number[] }) {
+  const { data: accountHexes, isLoading: isLoadingAllAccounts } =
+    useReadContracts({
+      allowFailure: true,
+      contracts: m3terIds.map((id) => ({
+        ...rollupContract,
+        functionName: "account",
+        args: [BigInt(id)],
+      })),
+    });
   const getAccounts = useServerFn(getServerAccounts);
 
   const { data: energyData, isLoading: isLoadingAccount } = useQuery({
@@ -29,27 +41,33 @@ function Statistics2({ m3terIds }: { m3terIds: number[] }) {
     queryFn: () => getAccounts({ data: m3terIds }),
   });
 
-  if (isLoadingAccount) {
+  if (isLoadingAccount || isLoadingAllAccounts) {
     return <StatLoader />;
   }
 
-  if (energyData) {
-    const totalEnergy = energyData / 1000;
+  if (energyData && accountHexes) {
+    const validAccounts = accountHexes
+      .filter((item) => item.status === "success")
+      .map((item) => hexToNumber(item.result as Address) / 1_000_000);
+    const totalEnergyData = validAccounts.reduce((sum, val) => sum + val, 0);
+    const totalEnergy = totalEnergyData / 1000;
+    const monthlyEnergy = energyData / 1000;
     const carbonSaved = 0.36 * energyData;
     const tokenValue = 280;
     const stats = [
       {
-        title: `Energy Consumed (${new Date().toLocaleString("en-US", { month: "short" })})`,
+        title: "Total Consumption",
         value: `${formatter.format(totalEnergy)} MWh`,
-        icon: FaSolarPanel,
+        icon: GiElectric,
         color: "bg-blue-500 dark:bg-blue-600",
       },
       {
-        title: "Electricity Price",
-        value: `280 NGN`,
-        icon: GiElectric,
-        color: "bg-green-500 dark:bg-green-600",
+        title: `Energy Consumed (${new Date().toLocaleString("en-US", { month: "short" })})`,
+        value: `${formatter.format(monthlyEnergy)} MWh`,
+        icon: FaSolarPanel,
+        color: "bg-blue-500 dark:bg-blue-600",
       },
+
       {
         title: "Carbon Offset",
         value: `${formatter.format(carbonSaved)} kg`,
