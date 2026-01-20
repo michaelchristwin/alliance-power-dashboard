@@ -6,9 +6,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { applyTheme, setColorScheme, type Color } from "@/lib/theme";
+import { setColorScheme, type Color } from "@/server/theme.server";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
+import { applyTheme } from "@/lib/utils";
 
 export function ModeToggle() {
   const router = useRouter();

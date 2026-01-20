@@ -22,7 +22,14 @@ type EnergyChartProps = {
   queryKey: string[];
   queryFn: () => Promise<DailyResponse[][]>;
 };
-const EnergyChart = ({ queryOptions }: { queryOptions: EnergyChartProps }) => {
+type LabelFormatter = (index: number) => string;
+const EnergyChart = ({
+  queryOptions,
+  labelFormatter,
+}: {
+  queryOptions: EnergyChartProps;
+  labelFormatter: LabelFormatter;
+}) => {
   const { data } = useSuspenseQuery(queryOptions);
   const chartData: ChartData<"bar"> = {
     labels: data[0].map((item) =>
@@ -33,7 +40,7 @@ const EnergyChart = ({ queryOptions }: { queryOptions: EnergyChartProps }) => {
       }),
     ),
     datasets: data.map((item, i) => ({
-      label: `M3ter ${11 + i}`,
+      label: labelFormatter(i),
       data: item.map((d) => d.total_energy),
       backgroundColor: colors[i % colors.length],
       borderColor: colors[i % colors.length].replace("0.8", "1"),

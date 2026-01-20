@@ -15,7 +15,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import Navbar from "@/components/Navbar";
 import { config } from "@/config/wagmi";
-import { getColorScheme } from "@/lib/theme";
+import { getColorScheme } from "@/server/theme.server";
 
 interface MyRouterContext {
   queryClient: QueryClient;

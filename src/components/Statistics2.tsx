@@ -2,7 +2,7 @@ import { motion, type Variants } from "motion/react";
 import { GiElectric } from "react-icons/gi";
 import { FaSolarPanel, FaLeaf, FaDollarSign } from "react-icons/fa";
 import StatLoader from "./loaders/stat-loader";
-
+import {} from "date-fns";
 import { useServerFn } from "@tanstack/react-start";
 import { getServerAccounts } from "@/queries";
 import { useQuery } from "@tanstack/react-query";
@@ -23,6 +23,7 @@ const cardVariants: Variants = {
 
 function Statistics2({ m3terIds }: { m3terIds: number[] }) {
   const getAccounts = useServerFn(getServerAccounts);
+
   const { data: energyData, isLoading: isLoadingAccount } = useQuery({
     queryKey: ["getAccount", m3terIds],
     queryFn: () => getAccounts({ data: m3terIds }),
@@ -38,7 +39,7 @@ function Statistics2({ m3terIds }: { m3terIds: number[] }) {
     const tokenValue = 280;
     const stats = [
       {
-        title: "Energy Generated",
+        title: `Energy Consumed (${new Date().toLocaleString("en-US", { month: "short" })})`,
         value: `${formatter.format(totalEnergy)} MWh`,
         icon: FaSolarPanel,
         color: "bg-blue-500 dark:bg-blue-600",
@@ -56,7 +57,7 @@ function Statistics2({ m3terIds }: { m3terIds: number[] }) {
         color: "bg-amber-500 dark:bg-amber-600",
       },
       {
-        title: "Revenue",
+        title: "Energy Bill",
         value: `\u20A6${formatter.format(tokenValue * energyData)}`,
         icon: FaDollarSign,
         color: "bg-purple-500 dark:bg-purple-600",

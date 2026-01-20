@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useLocation } from "@tanstack/react-router";
 import { locationData, type LocationKey } from "@/data/locations";
 import { GetDaily } from "@/queries";
 import { motion, type Variants } from "motion/react";
@@ -7,6 +7,9 @@ import BarChartLoader from "@/components/loaders/barchart-loader";
 import type { Timeframe } from "@/data/mockData";
 import EnergyChart from "@/components/EnergyChart";
 import Statistics2 from "@/components/Statistics2";
+import { exportPagePdfServer } from "@/server/pagetopdf.server";
+import { useMutation } from "@tanstack/react-query";
+import { Loader } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -50,8 +53,33 @@ export const Route = createFileRoute("/dashboard/$location")({
 
 function RouteComponent() {
   const { location, title, m3terIds } = Route.useLoaderData();
-
+  const routeLocation = useLocation();
   const [timeframe, setTimeframe] = useState<Timeframe>("daily");
+
+  const { mutateAsync: downloadPdf, isPending } = useMutation({
+    mutationFn: async () => {
+      const { innerWidth, innerHeight, devicePixelRatio } = window;
+      const response = await exportPagePdfServer({
+        data: {
+          url: `${window.location.origin}${routeLocation.href}`,
+          width: innerWidth,
+          height: innerHeight,
+          dpr: devicePixelRatio,
+        },
+      });
+      const buffer = await response.arrayBuffer();
+      const blob = new Blob([buffer], { type: "application/pdf" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "page.pdf";
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+    mutationKey: ["downloadPdf", location],
+  });
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   return (
     <motion.div
       className="text-center"
@@ -90,6 +118,7 @@ function RouteComponent() {
             </h2>
             <Suspense fallback={<BarChartLoader />}>
               <EnergyChart
+                labelFormatter={(i) => `Phase ${alphabet[i]}`}
                 queryOptions={{
                   queryKey: ["getDaily", location],
                   queryFn: () => GetDaily(m3terIds),
@@ -98,6 +127,23 @@ function RouteComponent() {
             </Suspense>
           </div>
         </motion.div>
+      </div>
+      <div className="w-full h-[50px] flex items-center justify-end">
+        <button
+          type="button"
+          disabled={isPending}
+          className="bg-green-600 h-[40px] w-[150px] flex space-x-1 justify-center items-center rounded-lg hover:bg-green-600/90 active:hover:bg-green-600/80 disabled:bg-green-600/60"
+          onClick={() => downloadPdf()}
+        >
+          {isPending ? (
+            <>
+              <span>Exporting</span>
+              <Loader size={19} className="animate-spin text-white" />
+            </>
+          ) : (
+            "Export as PDF"
+          )}
+        </button>
       </div>
     </motion.div>
   );

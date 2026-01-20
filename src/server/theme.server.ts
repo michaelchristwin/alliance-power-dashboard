@@ -28,20 +28,3 @@ export const setColorScheme = createServerFn({ method: "POST" })
 export const getColorScheme = createServerFn().handler(async () => {
   return getCookie(COOKIE_NAME) ?? "system";
 });
-
-export function applyTheme(scheme: Color) {
-  const root = window.document.documentElement;
-  root.classList.remove("light", "dark");
-
-  // This is the missing logic:
-  let resolved = scheme;
-
-  if (scheme === "system") {
-    // Check the actual OS preference
-    const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    resolved = isDark ? "dark" : "light";
-  }
-
-  root.classList.add(resolved);
-  root.dataset.theme = resolved;
-}

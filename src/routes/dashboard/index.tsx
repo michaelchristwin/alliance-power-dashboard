@@ -80,6 +80,7 @@ function Dashboard() {
             </h2>
             <Suspense fallback={<BarChartLoader />}>
               <EnergyChart
+                labelFormatter={(i) => `M3ter ${11 + i}`}
                 queryOptions={{
                   queryKey: ["getDaily"],
                   queryFn: () =>
