@@ -1,8 +1,8 @@
 {
   "functions": {
     "api/exportPagePdf.ts": {
-      "runtime": "nodejs@24.0.0",
-      "memory": 1024
+      "runtime": "nodejs22.x",
+      "memory": 2048
     }
   }
 }
