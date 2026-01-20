@@ -1,6 +1,6 @@
 {
   "functions": {
-    "src/server/exportPagePdfServer.ts": {
+    "api/exportPagePdf.ts": {
       "runtime": "nodejs@24.0.0",
       "memory": 1024
     }
