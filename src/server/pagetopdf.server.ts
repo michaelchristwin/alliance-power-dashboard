@@ -3,14 +3,14 @@ import puppeteer from "puppeteer-core";
 import chromium from "@sparticuz/chromium";
 import { createServerFn } from "@tanstack/react-start";
 
-const exportPageScheme = z.object({
+const exportPageSchema = z.object({
   url: z.string(),
   width: z.number(),
   height: z.number(),
   dpr: z.number(),
 });
 export const exportPagePdfServer = createServerFn()
-  .inputValidator(exportPageScheme)
+  .inputValidator(exportPageSchema)
   .handler(async ({ data }) => {
     const { url, width, height, dpr } = data;
     const pageUrl = new URL(url);
