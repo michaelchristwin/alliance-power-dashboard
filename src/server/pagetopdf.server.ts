@@ -1,15 +1,18 @@
 import z from "zod";
 import puppeteer from "puppeteer-core";
+import { addExtra } from "puppeteer-extra";
 import chromium from "@sparticuz/chromium-min";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { createServerFn, createMiddleware } from "@tanstack/react-start";
+
+const puppeteerExtra = addExtra(puppeteer);
+puppeteerExtra.use(StealthPlugin());
 
 export const internalOnlyMiddleware = createMiddleware().server(
   async ({ next, request }) => {
     const host = request.headers.get("host");
     const referer = request.headers.get("referer");
 
-    // 1. In local dev, host might be 'localhost:3000'
-    // 2. We check if referer exists and if it contains the host string
     const isAuthorized = referer && host && referer.includes(host);
 
     if (!isAuthorized && process.env.NODE_ENV === "production") {
