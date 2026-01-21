@@ -5,10 +5,15 @@ import { createServerFn, createMiddleware } from "@tanstack/react-start";
 
 export const internalOnlyMiddleware = createMiddleware().server(
   async ({ next, request }) => {
-    const authHeader = request.headers.get("x-internal-secret");
+    const host = request.headers.get("host");
+    const referer = request.headers.get("referer");
 
-    if (authHeader !== process.env.INTERNAL_FUNCTION_SECRET) {
-      throw new Error("Unauthorized: Nice try, bots.");
+    // 1. In local dev, host might be 'localhost:3000'
+    // 2. We check if referer exists and if it contains the host string
+    const isAuthorized = referer && host && referer.includes(host);
+
+    if (!isAuthorized && process.env.NODE_ENV === "production") {
+      throw new Error("Unauthorized: Requests must originate from the app.");
     }
 
     return next();

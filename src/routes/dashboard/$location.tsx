@@ -67,9 +67,6 @@ function RouteComponent() {
           height: innerHeight,
           dpr: devicePixelRatio,
         },
-        headers: {
-          "x-internal-secret": process.env.INTERNAL_FUNCTION_SECRET || "",
-        },
       });
       const buffer = await response.arrayBuffer();
       const blob = new Blob([buffer], { type: "application/pdf" });
@@ -83,6 +80,7 @@ function RouteComponent() {
     },
     mutationKey: ["downloadPdf", location],
   });
+
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
   return (
     <motion.div
