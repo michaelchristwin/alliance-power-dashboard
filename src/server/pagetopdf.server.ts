@@ -1,6 +1,8 @@
 import z from "zod";
 import puppeteer from "puppeteer-core";
+import { addExtra } from "puppeteer-extra";
 import chromium from "@sparticuz/chromium-min";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { createServerFn, createMiddleware } from "@tanstack/react-start";
 
 export const internalOnlyMiddleware = createMiddleware().server(
@@ -30,12 +32,8 @@ export const exportPagePdfServer = createServerFn()
   .inputValidator(exportPageSchema)
   .handler(async ({ data }) => {
     const { url, width, height, dpr } = data;
-    const [{ addExtra }, StealthPlugin] = await Promise.all([
-      import("puppeteer-extra"),
-      import("puppeteer-extra-plugin-stealth"),
-    ]);
     const puppeteerExtra = addExtra(puppeteer);
-    puppeteerExtra.use(StealthPlugin.default());
+    puppeteerExtra.use(StealthPlugin());
     const pageUrl = new URL(url);
     const browser = await puppeteerExtra.launch({
       args: chromium.args,
