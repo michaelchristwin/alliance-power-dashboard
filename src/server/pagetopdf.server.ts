@@ -1,7 +1,19 @@
 import z from "zod";
 import puppeteer from "puppeteer-core";
-import chromium from "@sparticuz/chromium";
-import { createServerFn } from "@tanstack/react-start";
+import chromium from "@sparticuz/chromium-min";
+import { createServerFn, createMiddleware } from "@tanstack/react-start";
+
+export const internalOnlyMiddleware = createMiddleware().server(
+  async ({ next, request }) => {
+    const authHeader = request.headers.get("x-internal-secret");
+
+    if (authHeader !== process.env.INTERNAL_FUNCTION_SECRET) {
+      throw new Error("Unauthorized: Nice try, bots.");
+    }
+
+    return next();
+  },
+);
 
 const exportPageSchema = z.object({
   url: z.string(),
@@ -9,7 +21,9 @@ const exportPageSchema = z.object({
   height: z.number(),
   dpr: z.number(),
 });
+
 export const exportPagePdfServer = createServerFn()
+  .middleware([internalOnlyMiddleware])
   .inputValidator(exportPageSchema)
   .handler(async ({ data }) => {
     const { url, width, height, dpr } = data;

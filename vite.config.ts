@@ -9,8 +9,8 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [tsConfigPaths(), tanstackStart(), nitro(), react(), tailwindcss()],
-  server: {
-    port: 5173,
+  ssr: {
+    external: ["@sparticuz/chromium-min", "puppeteer-core"],
   },
   resolve: {
     alias: {

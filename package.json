@@ -17,7 +17,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "@sparticuz/chromium": "^143.0.4",
+    "@sparticuz/chromium-min": "^143.0.4",
     "@tailwindcss/vite": "^4.1.14",
     "@tanstack/react-query": "^5.90.5",
     "@tanstack/react-query-devtools": "^5.90.2",
@@ -59,8 +59,5 @@
     "vite": "^7.3.1",
     "nitro": "npm:nitro-nightly@latest",
     "vite-tsconfig-paths": "^6.0.4"
-  },
-  "engines": {
-    "node": "22.x"
   }
 }
