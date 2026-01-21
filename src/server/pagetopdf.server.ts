@@ -1,12 +1,7 @@
 import z from "zod";
 import puppeteer from "puppeteer-core";
-import { addExtra } from "puppeteer-extra";
 import chromium from "@sparticuz/chromium-min";
-import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { createServerFn, createMiddleware } from "@tanstack/react-start";
-
-const puppeteerExtra = addExtra(puppeteer);
-puppeteerExtra.use(StealthPlugin());
 
 export const internalOnlyMiddleware = createMiddleware().server(
   async ({ next, request }) => {
@@ -35,8 +30,14 @@ export const exportPagePdfServer = createServerFn()
   .inputValidator(exportPageSchema)
   .handler(async ({ data }) => {
     const { url, width, height, dpr } = data;
+    const [{ addExtra }, StealthPlugin] = await Promise.all([
+      import("puppeteer-extra"),
+      import("puppeteer-extra-plugin-stealth"),
+    ]);
+    const puppeteerExtra = addExtra(puppeteer);
+    puppeteerExtra.use(StealthPlugin.default());
     const pageUrl = new URL(url);
-    const browser = await puppeteer.launch({
+    const browser = await puppeteerExtra.launch({
       args: chromium.args,
       executablePath: await chromium.executablePath(
         "https://github.com/Sparticuz/chromium/releases/download/v143.0.4/chromium-v143.0.4-pack.x64.tar",
