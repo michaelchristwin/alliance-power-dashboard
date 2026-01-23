@@ -9,14 +9,6 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [tsConfigPaths(), tanstackStart(), nitro(), react(), tailwindcss()],
-  ssr: {
-    external: [
-      "@sparticuz/chromium-min",
-      "puppeteer-core",
-      "puppeteer-extra",
-      "puppeteer-extra-plugin-stealth",
-    ],
-  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
