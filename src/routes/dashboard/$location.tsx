@@ -91,6 +91,7 @@ function RouteComponent() {
             </h2>
             <Suspense fallback={<BarChartLoader />}>
               <EnergyChart
+                meterIds={m3terIds}
                 labelFormatter={(i) => `Phase ${alphabet[i]}`}
                 queryOptions={{
                   queryKey: ["getDaily", location],

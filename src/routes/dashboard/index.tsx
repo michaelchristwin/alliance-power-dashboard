@@ -81,6 +81,10 @@ function Dashboard() {
             <Suspense fallback={<BarChartLoader />}>
               <EnergyChart
                 labelFormatter={(i) => `M3ter ${11 + i}`}
+                meterIds={[
+                  11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+                  26, 27, 28, 29,
+                ]}
                 queryOptions={{
                   queryKey: ["getDaily"],
                   queryFn: () =>

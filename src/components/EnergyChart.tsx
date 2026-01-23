@@ -4,33 +4,25 @@ import type { ChartOptions, ChartData } from "chart.js/auto";
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { DailyResponse } from "@/api-client";
+import { idToColor } from "@/lib/utils";
 
-const colors = [
-  "rgba(16,185,129,0.8)", // emerald
-  "rgba(59,130,246,0.8)", // blue
-  "rgba(249,115,22,0.8)", // orange
-  "rgba(236,72,153,0.8)", // pink
-  "rgba(139,92,246,0.8)", // violet
-  "rgba(34,197,94,0.8)", // green
-  "rgba(234,179,8,0.8)", // yellow
-  "rgba(239,68,68,0.8)", // red
-  "rgba(14,165,233,0.8)", // sky
-  "rgba(217,70,239,0.8)", // fuchsia
-  "rgba(107,114,128,0.8)", // gray
-];
 type EnergyChartProps = {
   queryKey: string[];
   queryFn: () => Promise<DailyResponse[][]>;
 };
 type LabelFormatter = (index: number) => string;
+
 const EnergyChart = ({
   queryOptions,
   labelFormatter,
+  meterIds,
 }: {
   queryOptions: EnergyChartProps;
   labelFormatter: LabelFormatter;
+  meterIds: number[];
 }) => {
   const { data } = useSuspenseQuery(queryOptions);
+
   const chartData: ChartData<"bar"> = {
     labels: data[0].map((item) =>
       new Date(item.hour_start_utc).toLocaleTimeString([], {
@@ -39,11 +31,12 @@ const EnergyChart = ({
         minute: "2-digit",
       }),
     ),
+
     datasets: data.map((item, i) => ({
       label: labelFormatter(i),
       data: item.map((d) => d.total_energy),
-      backgroundColor: colors[i % colors.length],
-      borderColor: colors[i % colors.length].replace("0.8", "1"),
+      backgroundColor: idToColor(meterIds[i]),
+      borderColor: idToColor(meterIds[i]),
       borderWidth: 1,
       stack: "combined", // enable stacking
     })),
