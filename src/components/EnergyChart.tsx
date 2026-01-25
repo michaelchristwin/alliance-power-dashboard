@@ -97,7 +97,7 @@ const EnergyChart = ({
 
   return (
     <motion.div
-      className="h-80"
+      className="h-90"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
