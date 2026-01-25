@@ -42,7 +42,7 @@ const itemVariants: Variants = {
 
 function Dashboard() {
   const [timeframe, setTimeframe] = useState<Timeframe>("daily");
-  const m3terIds = Array.from({ length: 11 }, (_, i) => 11 + i);
+  const m3terIds = Array.from({ length: 19 }, (_, i) => 11 + i);
   return (
     <motion.div
       className="text-center"
@@ -81,17 +81,10 @@ function Dashboard() {
             <Suspense fallback={<BarChartLoader />}>
               <EnergyChart
                 labelFormatter={(i) => `M3ter ${11 + i}`}
-                meterIds={[
-                  11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
-                  26, 27, 28, 29,
-                ]}
+                meterIds={m3terIds}
                 queryOptions={{
                   queryKey: ["getDaily"],
-                  queryFn: () =>
-                    GetDaily([
-                      11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24,
-                      25, 26, 27, 28, 29,
-                    ]),
+                  queryFn: () => GetDaily(m3terIds),
                 }}
               />
             </Suspense>

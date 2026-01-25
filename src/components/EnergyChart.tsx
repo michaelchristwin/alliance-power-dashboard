@@ -1,10 +1,9 @@
 import { motion } from "motion/react";
 import { Bar } from "react-chartjs-2";
 import type { ChartOptions, ChartData } from "chart.js/auto";
-
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { DailyResponse } from "@/api-client";
-import { idToColor } from "@/lib/utils";
+import { getHighlyDistinctColor } from "@/lib/utils";
 
 type EnergyChartProps = {
   queryKey: string[];
@@ -35,8 +34,8 @@ const EnergyChart = ({
     datasets: data.map((item, i) => ({
       label: labelFormatter(i),
       data: item.map((d) => d.total_energy),
-      backgroundColor: idToColor(meterIds[i]),
-      borderColor: idToColor(meterIds[i]),
+      backgroundColor: getHighlyDistinctColor(meterIds[i]),
+      borderColor: getHighlyDistinctColor(meterIds[i]),
       borderWidth: 1,
       stack: "combined", // enable stacking
     })),
