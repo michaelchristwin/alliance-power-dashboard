@@ -34,14 +34,14 @@ function Statistics2({ m3terIds }: { m3terIds: number[] }) {
         args: [BigInt(id)],
       })),
     });
-  console.log("Account hexes: ", accountHexes);
+
   const getAccounts = useServerFn(getServerAccounts);
 
   const { data: energyData, isLoading: isLoadingAccount } = useQuery({
     queryKey: ["getAccount", m3terIds],
     queryFn: () => getAccounts({ data: m3terIds }),
   });
-  console.log("Energy Data: ", energyData);
+
   if (isLoadingAccount || isLoadingAllAccounts) {
     return <StatLoader />;
   }
