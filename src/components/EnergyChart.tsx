@@ -55,14 +55,7 @@ const EnergyChart = ({
     },
     plugins: {
       legend: {
-        position: "top",
-        labels: {
-          color: "rgb(75,85,99)", // text-gray-600
-          font: {
-            family: "'Inter', sans-serif",
-            size: 10,
-          },
-        },
+        display: false,
       },
       tooltip: {
         mode: "index",
@@ -77,6 +70,7 @@ const EnergyChart = ({
         display: false,
       },
     },
+
     scales: {
       x: {
         grid: {
