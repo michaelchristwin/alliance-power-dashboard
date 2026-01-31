@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import type { ChartOptions, ChartData } from "chart.js/auto";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import type { DailyResponse } from "@/api-client";
@@ -22,7 +22,7 @@ const EnergyChart = ({
 }) => {
   const { data } = useSuspenseQuery(queryOptions);
 
-  const chartData: ChartData<"bar"> = {
+  const chartData: ChartData<"line"> = {
     labels: data[0].map((item) =>
       new Date(item.hour_start_utc).toLocaleTimeString([], {
         hour12: false,
@@ -34,16 +34,23 @@ const EnergyChart = ({
     datasets: data.map((item, i) => ({
       label: labelFormatter(i),
       data: item.map((d) => d.total_energy),
-      backgroundColor: getHighlyDistinctColor(meterIds[i]),
       borderColor: getHighlyDistinctColor(meterIds[i]),
+      backgroundColor: getHighlyDistinctColor(meterIds[i]),
+      fill: true, // 👈 enables area
+      tension: 0.3,
       borderWidth: 1,
       stack: "combined", // enable stacking
     })),
   };
 
-  const chartOptions: ChartOptions<"bar"> = {
+  const chartOptions: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
+    elements: {
+      line: {
+        fill: true,
+      },
+    },
     plugins: {
       legend: {
         position: "top",
@@ -70,7 +77,6 @@ const EnergyChart = ({
     },
     scales: {
       x: {
-        stacked: true,
         grid: {
           color: "rgba(0,0,0,0.05)",
         },
@@ -102,7 +108,7 @@ const EnergyChart = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <Bar data={chartData} options={chartOptions} />
+      <Line data={chartData} options={chartOptions} />
     </motion.div>
   );
 };
