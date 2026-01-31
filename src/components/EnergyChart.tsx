@@ -22,28 +22,35 @@ const EnergyChart = ({
 }) => {
   const { data } = useSuspenseQuery(queryOptions);
 
-  const chartData: ChartData<"line"> = {
-    labels: data[0].map((item) =>
-      new Date(item.hour_start_utc).toLocaleTimeString([], {
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    ),
+  const labels = Array.from(
+    { length: 24 },
+    (_, h) => `${String(h).padStart(2, "0")}:00`,
+  );
 
-    datasets: data.map((item, i) => ({
-      label: labelFormatter(i),
-      data: item.map((d) => d.total_energy),
-      borderColor: getHighlyDistinctColor(meterIds[i]),
-      backgroundColor: getHighlyDistinctColor(meterIds[i]).replace(
-        /hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/,
-        (_, h, s) => `hsla(${h}, ${s}%, 62%, 0.6)`,
-      ),
-      fill: true, // 👈 enables area
-      tension: 0.3,
-      borderWidth: 1,
-      stack: "combined", // enable stacking
-    })),
+  const chartData: ChartData<"line"> = {
+    labels,
+    datasets: data.map((item, i) => {
+      const values = new Array(24).fill(0);
+
+      item.forEach((d) => {
+        const hour = new Date(d.hour_start_utc).getUTCHours();
+        values[hour] = d.total_energy;
+      });
+
+      return {
+        label: labelFormatter(i),
+        data: values,
+        borderColor: getHighlyDistinctColor(meterIds[i]),
+        backgroundColor: getHighlyDistinctColor(meterIds[i]).replace(
+          /hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/,
+          (_, h, s) => `hsla(${h}, ${s}%, 62%, 0.6)`,
+        ),
+        fill: true,
+        tension: 0.3,
+        borderWidth: 1,
+        stack: "combined",
+      };
+    }),
   };
 
   const chartOptions: ChartOptions<"line"> = {
