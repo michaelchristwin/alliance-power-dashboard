@@ -35,7 +35,9 @@ const EnergyChart = ({
       label: labelFormatter(i),
       data: item.map((d) => d.total_energy),
       borderColor: getHighlyDistinctColor(meterIds[i]),
-      backgroundColor: getHighlyDistinctColor(meterIds[i]),
+      backgroundColor: getHighlyDistinctColor(meterIds[i])
+        .replace("hsl(", "hsla(")
+        .replace(")", ", 0.6)"),
       fill: true, // 👈 enables area
       tension: 0.3,
       borderWidth: 1,
