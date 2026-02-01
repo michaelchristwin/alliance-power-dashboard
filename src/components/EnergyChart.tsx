@@ -30,7 +30,7 @@ const EnergyChart = ({
   const chartData: ChartData<"line"> = {
     labels,
     datasets: data.map((item, i) => {
-      const values = new Array(24).fill(0);
+      const values = new Array(24).fill(null);
 
       item.forEach((d) => {
         const hour = new Date(d.hour_start_utc).getUTCHours();
@@ -40,6 +40,7 @@ const EnergyChart = ({
       return {
         label: labelFormatter(i),
         data: values,
+        spanGaps: true,
         borderColor: getHighlyDistinctColor(meterIds[i]),
         backgroundColor: getHighlyDistinctColor(meterIds[i]).replace(
           /hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/,

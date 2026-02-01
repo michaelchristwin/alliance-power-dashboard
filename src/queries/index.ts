@@ -55,6 +55,7 @@ export const getServerAccounts = createServerFn({ method: "GET" })
   .inputValidator(propsSchema)
   .handler(async ({ data }) => {
     const { queryClient } = getContext();
+
     const { result, error } = await dune.getLatestResult({ queryId: 5911866 });
 
     if (error || !result) {
