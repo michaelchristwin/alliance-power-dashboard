@@ -15,10 +15,12 @@ const EnergyChart = ({
   queryOptions,
   labelFormatter,
   meterIds,
+  isRolling,
 }: {
   queryOptions: EnergyChartProps;
   labelFormatter: LabelFormatter;
   meterIds: number[];
+  isRolling: boolean;
 }) => {
   const { data } = useSuspenseQuery(queryOptions);
 
@@ -36,10 +38,15 @@ const EnergyChart = ({
         const hour = new Date(d.hour_start_utc).getUTCHours();
         values[hour] = d.total_energy;
       });
-
+      let running = 0;
+      const rollingValues = values.map((v) => {
+        if (v == null) return null;
+        running += v;
+        return running;
+      });
       return {
         label: labelFormatter(i),
-        data: values,
+        data: isRolling ? rollingValues : values,
         spanGaps: true,
         borderColor: getHighlyDistinctColor(meterIds[i]),
         backgroundColor: getHighlyDistinctColor(meterIds[i]).replace(

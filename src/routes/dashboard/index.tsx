@@ -1,6 +1,8 @@
 import EnergyChart from "@/components/EnergyChart";
 import BarChartLoader from "@/components/loaders/barchart-loader";
 import Statistics from "@/components/Statistics";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import type { Timeframe } from "@/data/mockData";
 import { GetDaily } from "@/queries";
 import { createFileRoute } from "@tanstack/react-router";
@@ -42,6 +44,7 @@ const itemVariants: Variants = {
 
 function Dashboard() {
   const [timeframe, setTimeframe] = useState<Timeframe>("daily");
+  const [checked, setChecked] = useState(false);
   const m3terIds = Array.from({ length: 19 }, (_, i) => 11 + i);
   return (
     <motion.div
@@ -57,7 +60,7 @@ function Dashboard() {
       <motion.div className="mb-6" variants={itemVariants}>
         <Statistics m3terIds={m3terIds} />
       </motion.div>
-      <div className="flex mb-4 space-x-4">
+      <div className="flex mb-4 space-x-4 justify-between">
         {["daily"].map((option) => (
           <button
             key={option}
@@ -71,6 +74,14 @@ function Dashboard() {
             {option.charAt(0).toUpperCase() + option.slice(1)}
           </button>
         ))}
+        <div className="flex items-center space-x-2">
+          <Switch
+            id="isRolling"
+            checked={checked}
+            onCheckedChange={setChecked}
+          />
+          <Label htmlFor="isRolling">Rolling Mode</Label>
+        </div>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <motion.div className="lg:col-span-3" variants={itemVariants}>
@@ -80,6 +91,7 @@ function Dashboard() {
             </h2>
             <Suspense fallback={<BarChartLoader />}>
               <EnergyChart
+                isRolling={checked}
                 labelFormatter={(i) => `M3ter ${11 + i}`}
                 meterIds={m3terIds}
                 queryOptions={{
