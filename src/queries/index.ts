@@ -1,6 +1,7 @@
 import z from "zod";
 import {
   getDailyM3TerM3TerIdDailyGetOptions,
+  getMonthOfYearM3TerM3TerIdMonthYearMonthGetOptions,
   getProposalProposalTxHashGetOptions,
 } from "@/api-client/@tanstack/react-query.gen";
 import { createClient } from "@/api-client/client";
@@ -108,4 +109,26 @@ export const getServerAccounts = createServerFn({ method: "GET" })
       .reduce((sum, val) => sum + Number(val.account), 0);
 
     return Math.max(latestAccount - headaccount, 0);
+  });
+
+export const getServerMonthly = createServerFn({ method: "GET" })
+  .inputValidator(propsSchema)
+  .handler(async ({ data }) => {
+    const { queryClient } = getContext();
+    const d = new Date();
+    const monthData = await Promise.all(
+      data.map((id) =>
+        queryClient.fetchQuery({
+          ...getMonthOfYearM3TerM3TerIdMonthYearMonthGetOptions({
+            client: m3terscanClient,
+            path: {
+              m3ter_id: id,
+              month: d.getMonth(),
+              year: d.getFullYear(),
+            },
+          }),
+        }),
+      ),
+    );
+    return monthData;
   });
