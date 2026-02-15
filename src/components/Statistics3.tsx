@@ -4,7 +4,7 @@ import { FaSolarPanel, FaLeaf, FaDollarSign } from "react-icons/fa";
 import StatLoader from "./loaders/stat-loader";
 import {} from "date-fns";
 import { useServerFn } from "@tanstack/react-start";
-import { getServerAccounts, getServerMonthly } from "@/queries";
+import {  getServerMonthly } from "@/queries";
 import { useQuery } from "@tanstack/react-query";
 import { useReadContracts } from "wagmi";
 import { rollupContract } from "@/config/rollup";
