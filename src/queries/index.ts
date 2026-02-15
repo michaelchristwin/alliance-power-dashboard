@@ -117,18 +117,19 @@ export const getServerMonthly = createServerFn({ method: "GET" })
     const { queryClient } = getContext();
     const d = new Date();
     const monthData = await Promise.all(
-      data.map((id) =>
-        queryClient.fetchQuery({
+      data.map((id) => {
+        return queryClient.fetchQuery({
           ...getMonthOfYearM3TerM3TerIdMonthYearMonthGetOptions({
             client: m3terscanClient,
             path: {
               m3ter_id: id,
-              month: d.getMonth(),
+              month: d.getMonth() + 1,
               year: d.getFullYear(),
             },
           }),
-        }),
-      ),
+        });
+      }),
     );
+
     return monthData;
   });

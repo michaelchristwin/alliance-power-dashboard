@@ -4,7 +4,7 @@ import { FaSolarPanel, FaLeaf, FaDollarSign } from "react-icons/fa";
 import StatLoader from "./loaders/stat-loader";
 import {} from "date-fns";
 import { useServerFn } from "@tanstack/react-start";
-import {  getServerMonthly } from "@/queries";
+import { getServerMonthly } from "@/queries";
 import { useQuery } from "@tanstack/react-query";
 import { useReadContracts } from "wagmi";
 import { rollupContract } from "@/config/rollup";
@@ -55,7 +55,9 @@ function Statistics3({ m3terIds }: { m3terIds: number[] }) {
     const validEnergy = energyDataMonthly.map((item) =>
       item.reduce((sum, val) => sum + val.total_energy, 0),
     );
+    //console.log(energyDataMonthly);
     const energyData = validEnergy.reduce((sum, val) => sum + val, 0);
+    //console.log(energyData);
     const totalEnergy = totalEnergyData / 1000;
     const monthlyEnergy = energyData / 1000;
     const carbonSaved = 0.36 * energyData;
