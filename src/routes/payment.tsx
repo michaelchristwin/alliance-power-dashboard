@@ -7,6 +7,9 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// import { DaimoPayButton } from "@daimo/pay";
+// import { optimismUSDC } from "@daimo/pay-common";
+
 
 export const Route = createFileRoute("/payment")({
   component: RouteComponent,
@@ -75,9 +78,7 @@ function RouteComponent() {
                     className="h-[40px] w-[90%] ps-9 rounded border-b outline-none"
                   />
                 </fieldset>
-                <button className="bg-green-500 mt-5 rounded-lg w-full h-[50px]">
-                  Pay with USDC
-                </button>
+                <button>Pay with USDC</button>
               </form>
             </TabsContent>
           </Tabs>

@@ -65,7 +65,7 @@ function Statistics3({ m3terIds }: { m3terIds: number[] }) {
     const stats = [
       {
         title: "Total Consumption",
-        value: `${formatter.format(totalEnergy)} MWh`,
+        value: `${formatter.format(totalEnergy + monthlyEnergy)} MWh`,
         icon: GiElectric,
         color: "bg-blue-500 dark:bg-blue-600",
       },
