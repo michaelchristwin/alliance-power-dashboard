@@ -133,3 +133,28 @@ export const getServerMonthly = createServerFn({ method: "GET" })
 
     return monthData;
   });
+
+export const fetchSession = createServerFn({ method: "POST" }).handler(async () => {
+  const response = await fetch("https://api.daimo.com/v1/sessions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.DAIMO_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      destination: {
+        type: "evm",
+        address: "0xyourAddress",
+        chainId: 8453,
+        tokenAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        amountUnits: "10.00"
+      },
+      display: {
+        title: "Deposit to Michael",
+        verb: "Deposit"
+      }
+    }),
+  })
+  const { session } = await response.json()
+  return session
+})
