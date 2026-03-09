@@ -16,6 +16,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import Navbar from "@/components/Navbar";
 import { config } from "@/config/wagmi";
 import { getColorScheme } from "@/server/theme.server";
+import "@daimo/sdk/web/theme.css";
 
 interface MyRouterContext {
   queryClient: QueryClient;

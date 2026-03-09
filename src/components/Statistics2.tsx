@@ -2,7 +2,6 @@ import { motion, type Variants } from "motion/react";
 import { GiElectric } from "react-icons/gi";
 import { FaSolarPanel, FaLeaf, FaDollarSign } from "react-icons/fa";
 import StatLoader from "./loaders/stat-loader";
-import {} from "date-fns";
 import { useServerFn } from "@tanstack/react-start";
 import { getServerAccounts } from "@/queries";
 import { useQuery } from "@tanstack/react-query";

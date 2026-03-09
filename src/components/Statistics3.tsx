@@ -36,8 +36,6 @@ function Statistics3({ m3terIds }: { m3terIds: number[] }) {
       })),
     });
 
-  // const getAccounts = useServerFn(getServerAccounts);
-
   const { data: energyDataMonthly, isLoading: isLoadingAccount } = useQuery({
     queryKey: ["getAccount", m3terIds],
     queryFn: () => getMonthly({ data: m3terIds }),
