@@ -7,11 +7,7 @@ import { z } from "zod";
 import { useState, useEffect } from "react";
 import { DailyBarChart, ActivitiesTable } from "m3terscan-components";
 import { useQuery } from "wagmi/query";
-import { m3terscanClient } from "@/queries";
-import {
-  getActivitiesM3TerM3TerIdActivitiesGetOptions,
-  getDailyM3TerM3TerIdDailyGetOptions,
-} from "@/api-client/@tanstack/react-query.gen";
+import { meterQueries } from "@/queries";
 
 const searchSchema = z.object({
   m3terId: z.coerce.number().optional(),
@@ -57,12 +53,7 @@ function Assets() {
   const { m3terId } = search;
 
   const { data, isError, isLoading } = useQuery({
-    ...getDailyM3TerM3TerIdDailyGetOptions({
-      client: m3terscanClient,
-      path: {
-        m3ter_id: m3terId!,
-      },
-    }),
+    ...meterQueries.getDaily(m3terId!),
     enabled: !!m3terId,
   });
 
@@ -70,15 +61,7 @@ function Assets() {
     data: activitesData,
     isError: activitesError,
     isLoading: activitiesLoading,
-  } = useQuery({
-    ...getActivitiesM3TerM3TerIdActivitiesGetOptions({
-      client: m3terscanClient,
-      path: {
-        m3ter_id: m3terId!,
-      },
-    }),
-    enabled: !!m3terId,
-  });
+  } = useQuery({ ...meterQueries.getActivities(m3terId!), enabled: !!m3terId });
   return (
     <div className="w-full h-full flex flex-col gap-4">
       <input

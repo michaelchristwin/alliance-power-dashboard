@@ -1,58 +1,80 @@
 import z from "zod";
-import {
-  getDailyM3TerM3TerIdDailyGetOptions,
-  getMonthOfYearM3TerM3TerIdMonthYearMonthGetOptions,
-  getProposalProposalTxHashGetOptions,
-} from "@/api-client/@tanstack/react-query.gen";
-import { createClient } from "@/api-client/client";
 import { getContext } from "@/integrations/client";
 import { createServerFn } from "@tanstack/react-start";
 import { DuneClient } from "@duneanalytics/client-sdk";
 import { getLastDayOfPreviousMonthUTC } from "@/lib/utils";
 import { getUnixTime } from "date-fns";
+import { queryOptions } from "@tanstack/react-query";
+import { Configuration, MeterApi, ProposalApi } from "@/api-sdk";
 
 const dune = new DuneClient(process.env.DUNE_API_KEY || "");
 
-export async function GetMonthly(m3terId: string) {
-  const year = new Date().getFullYear();
-  const months = Array.from({ length: 12 }, (_, i) => i); // 0–11 inclusive
+const config = new Configuration({
+  basePath: import.meta.env.VITE_API_URL || "",
+});
+const meterApi = new MeterApi(config);
+const proposalApi = new ProposalApi(config);
 
-  const responses = await Promise.all(
-    months.map(async (month) => {
-      const response = await fetch(
-        `http://localhost:8080/m3ter/${m3terId}/months/${year}/${month}`,
-      );
-      return response.json();
+const meterQueries = {
+  getDaily: (meterId: number) =>
+    queryOptions({
+      queryKey: ["getDaily", meterId],
+      queryFn: () =>
+        meterApi.getDailyMeterMeterIdDailyGet(meterId).then((r) => r.data),
     }),
-  );
 
-  return responses; // array of 12 items
-}
+  getMonthOfYear: (meterId: number, year: number, month: number) =>
+    queryOptions({
+      queryKey: ["getMonthOfYear", meterId, year, month],
+      queryFn: () =>
+        meterApi
+          .getMonthOfYearMeterMeterIdMonthMonthYearGet(meterId, year, month)
+          .then((r) => r.data),
+    }),
 
-export async function GetDaily(meterIds: number[]) {
+  getWeeksOfYear: (meterId: number, year: number) =>
+    queryOptions({
+      queryKey: ["getWeeksOfYear", meterId, year],
+      queryFn: () =>
+        meterApi
+          .getWeeksOfYearMeterMeterIdWeeksYearGet(meterId, year)
+          .then((r) => r.data),
+    }),
+
+  getActivities: (meterId: number, after?: string, limit?: number) =>
+    queryOptions({
+      queryKey: ["getActivities", meterId, after, limit],
+      queryFn: () =>
+        meterApi
+          .getActivitiesMeterMeterIdActivitiesGet(meterId, after, limit)
+          .then((r) => r.data),
+    }),
+};
+
+const proposalQueries = {
+  getProposals: (txHash: string) =>
+    queryOptions({
+      queryKey: ["getProposals", txHash],
+      queryFn: () =>
+        proposalApi.getProposalProposalTxHashGet(txHash).then((r) => r.data),
+    }),
+};
+
+const propsSchema = z.array(z.number().int());
+
+async function GetDaily(meterIds: number[]) {
   const { queryClient } = getContext();
 
   const data = await Promise.all(
     meterIds.map((meterId) =>
-      queryClient.fetchQuery({
-        ...getDailyM3TerM3TerIdDailyGetOptions({
-          client: m3terscanClient,
-          path: { m3ter_id: meterId },
-        }),
-      }),
+      queryClient.fetchQuery(meterQueries.getDaily(meterId)),
     ),
   );
 
   return data;
 }
 
-export const m3terscanClient = createClient({
-  baseUrl: import.meta.env.VITE_API_URL,
-});
-
-const propsSchema = z.array(z.number().int());
-
-export const getServerAccounts = createServerFn({ method: "GET" })
+const getServerAccounts = createServerFn({ method: "GET" })
   .inputValidator(propsSchema)
   .handler(async ({ data }) => {
     const { queryClient } = getContext();
@@ -76,29 +98,18 @@ export const getServerAccounts = createServerFn({ method: "GET" })
       );
 
     const latestRow = result.rows[result.rows.length - 1];
-    // console.log("Start Row", startRow[0]);
-    // console.log("Latest Row: ", latestRow);
+
     if (!startRow.length || !latestRow) {
       throw new Error("Missing rows for proposal lookup");
     }
 
     const [headProposal, latestProposal] = await Promise.all([
-      queryClient.fetchQuery({
-        ...getProposalProposalTxHashGetOptions({
-          client: m3terscanClient,
-          path: {
-            tx_hash: startRow[0].hash as string,
-          },
-        }),
-      }),
-      queryClient.fetchQuery({
-        ...getProposalProposalTxHashGetOptions({
-          client: m3terscanClient,
-          path: {
-            tx_hash: latestRow.hash as string,
-          },
-        }),
-      }),
+      queryClient.fetchQuery(
+        proposalQueries.getProposals(startRow[0].hash as string),
+      ),
+      queryClient.fetchQuery(
+        proposalQueries.getProposals(latestRow.hash as string),
+      ),
     ]);
 
     const latestAccount = latestProposal
@@ -111,50 +122,56 @@ export const getServerAccounts = createServerFn({ method: "GET" })
     return Math.max(latestAccount - headaccount, 0);
   });
 
-export const getServerMonthly = createServerFn({ method: "GET" })
+const getServerMonthly = createServerFn({ method: "GET" })
   .inputValidator(propsSchema)
   .handler(async ({ data }) => {
     const { queryClient } = getContext();
     const d = new Date();
     const monthData = await Promise.all(
       data.map((id) => {
-        return queryClient.fetchQuery({
-          ...getMonthOfYearM3TerM3TerIdMonthYearMonthGetOptions({
-            client: m3terscanClient,
-            path: {
-              m3ter_id: id,
-              month: d.getMonth() + 1,
-              year: d.getFullYear(),
-            },
-          }),
-        });
+        return queryClient.fetchQuery(
+          meterQueries.getMonthOfYear(
+            id,
+            d.getMonth() + 1,
+            d.getFullYear() + 1,
+          ),
+        );
       }),
     );
 
     return monthData;
   });
 
-export const fetchSession = createServerFn({ method: "POST" }).handler(async () => {
+const fetchSession = createServerFn({ method: "POST" }).handler(async () => {
   const response = await fetch("https://api.daimo.com/v1/sessions", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.DAIMO_API_KEY}`,
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       destination: {
         type: "evm",
         address: "0xyourAddress",
         chainId: 8453,
-        tokenAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-        amountUnits: "10.00"
+        tokenAddress: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913s",
+        amountUnits: "10.00",
       },
       display: {
         title: "Deposit to Michael",
-        verb: "Deposit"
-      }
+        verb: "Deposit",
+      },
     }),
-  })
-  const { session } = await response.json()
-  return session
-})
+  });
+  const { session } = await response.json();
+  return session;
+});
+
+export {
+  GetDaily,
+  getServerAccounts,
+  getServerMonthly,
+  fetchSession,
+  meterQueries,
+  proposalQueries,
+};
