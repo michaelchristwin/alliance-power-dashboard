@@ -6,7 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { setColorScheme, type Color } from "@/server/theme.server";
+import { setColorScheme, type Color } from "@/utils/theme.functions";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "@tanstack/react-router";
 import { applyTheme } from "@/lib/utils";

@@ -19,7 +19,7 @@ export const colorSchema = z
 export type Color = z.infer<typeof colorSchema>;
 
 export const setColorScheme = createServerFn({ method: "POST" })
-  .inputValidator(colorSchema)
+  .validator(colorSchema)
   .handler(async ({ data }) => {
     setCookie(COOKIE_NAME, data, cookieOptions);
     return;
