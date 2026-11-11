@@ -88,5 +88,3 @@ function Assets() {
     </div>
   );
 }
-
-export default Assets;

@@ -1,9 +1,10 @@
 import { motion } from "motion/react";
 import { Line } from "react-chartjs-2";
 import type { ChartOptions, ChartData } from "chart.js/auto";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import type { DailyResponse } from "@/api-sdk";
 import { getHighlyDistinctColor } from "@/lib/utils";
+import BarChartLoader from "@/components/loaders/barchart-loader";
 
 type EnergyChartProps = {
   queryKey: string[];
@@ -22,45 +23,12 @@ const EnergyChart = ({
   meterIds: number[];
   isRolling: boolean;
 }) => {
-  const { data } = useSuspenseQuery(queryOptions);
+  const { isLoading, isError, isSuccess, error, data } = useQuery(queryOptions);
 
   const labels = Array.from(
     { length: 24 },
     (_, h) => `${String(h).padStart(2, "0")}:00`,
   );
-
-  const chartData: ChartData<"line"> = {
-    labels,
-    datasets: data.map((item, i) => {
-      const values = new Array(24).fill(null);
-
-      item.forEach((d) => {
-        const hour = new Date(d.hour_start_utc).getUTCHours();
-        values[hour] = d.total_energy;
-      });
-      let running = 0;
-      const rollingValues = values.map((v) => {
-        if (v == null) return null;
-        running += v;
-        return running;
-      });
-      return {
-        label: labelFormatter(i),
-        data: isRolling ? rollingValues : values,
-        spanGaps: true,
-        borderColor: getHighlyDistinctColor(meterIds[i]),
-        backgroundColor: getHighlyDistinctColor(meterIds[i]).replace(
-          /hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/,
-          (_, h, s) => `hsla(${h}, ${s}%, 62%, 0.6)`,
-        ),
-        fill: true,
-        tension: 0.3,
-        borderWidth: 1,
-        stack: "combined",
-      };
-    }),
-  };
-
   const chartOptions: ChartOptions<"line"> = {
     responsive: true,
     maintainAspectRatio: false,
@@ -116,17 +84,54 @@ const EnergyChart = ({
       easing: "easeOutQuart",
     },
   };
+  if (isLoading) {
+    return <BarChartLoader />;
+  } else if (isError) {
+    return <p>{error.message}</p>;
+  } else if (isSuccess) {
+    const chartData: ChartData<"line"> = {
+      labels,
+      datasets: data.map((item, i) => {
+        const values = new Array(24).fill(null);
 
-  return (
-    <motion.div
-      className="h-90"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      <Line data={chartData} options={chartOptions} />
-    </motion.div>
-  );
+        item.forEach((d) => {
+          const hour = new Date(d.hour_start_utc).getUTCHours();
+          values[hour] = d.total_energy;
+        });
+        let running = 0;
+        const rollingValues = values.map((v) => {
+          if (v == null) return null;
+          running += v;
+          return running;
+        });
+        return {
+          label: labelFormatter(i),
+          data: isRolling ? rollingValues : values,
+          spanGaps: true,
+          borderColor: getHighlyDistinctColor(meterIds[i]),
+          backgroundColor: getHighlyDistinctColor(meterIds[i]).replace(
+            /hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/,
+            (_, h, s) => `hsla(${h}, ${s}%, 62%, 0.6)`,
+          ),
+          fill: true,
+          tension: 0.3,
+          borderWidth: 1,
+          stack: "combined",
+        };
+      }),
+    };
+
+    return (
+      <motion.div
+        className="h-90"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <Line data={chartData} options={chartOptions} />
+      </motion.div>
+    );
+  }
 };
 
 export default EnergyChart;

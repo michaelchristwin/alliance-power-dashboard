@@ -2,8 +2,7 @@ import { motion, type Variants } from "motion/react";
 import { GiElectric } from "react-icons/gi";
 import { FaSolarPanel, FaLeaf, FaDollarSign } from "react-icons/fa";
 import StatLoader from "./loaders/stat-loader";
-import { useServerFn } from "@tanstack/react-start";
-import { getServerAccounts } from "@/queries";
+import { getAccounts } from "@/queries";
 import { useQuery } from "@tanstack/react-query";
 import { useReadContracts } from "wagmi";
 import { rollupContract } from "@/config/rollup";
@@ -34,11 +33,9 @@ function Statistics2({ m3terIds }: { m3terIds: number[] }) {
       })),
     });
 
-  const getAccounts = useServerFn(getServerAccounts);
-
   const { data: energyData, isLoading: isLoadingAccount } = useQuery({
     queryKey: ["getAccount", m3terIds],
-    queryFn: () => getAccounts({ data: m3terIds }),
+    queryFn: () => getAccounts({ input: m3terIds }),
   });
 
   if (isLoadingAccount || isLoadingAllAccounts) {

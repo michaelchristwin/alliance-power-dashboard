@@ -1,5 +1,4 @@
 import EnergyChart from "@/components/EnergyChart";
-import BarChartLoader from "@/components/loaders/barchart-loader";
 import Statistics from "@/components/Statistics";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -7,7 +6,7 @@ import type { Timeframe } from "@/data/mockData";
 import { GetDaily } from "@/queries";
 import { createFileRoute } from "@tanstack/react-router";
 import { motion, type Variants } from "motion/react";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 
 export const Route = createFileRoute("/dashboard/")({
   component: Dashboard,
@@ -89,17 +88,16 @@ function Dashboard() {
             <h2 className="text-xl font-semibold mb-4">
               Energy Generation & Minting
             </h2>
-            <Suspense fallback={<BarChartLoader />}>
-              <EnergyChart
-                isRolling={checked}
-                labelFormatter={(i) => `M3ter ${11 + i}`}
-                meterIds={m3terIds}
-                queryOptions={{
-                  queryKey: ["getDaily"],
-                  queryFn: () => GetDaily(m3terIds),
-                }}
-              />
-            </Suspense>
+
+            <EnergyChart
+              isRolling={checked}
+              labelFormatter={(i) => `M3ter ${11 + i}`}
+              meterIds={m3terIds}
+              queryOptions={{
+                queryKey: ["getDaily"],
+                queryFn: () => GetDaily(m3terIds),
+              }}
+            />
           </div>
         </motion.div>
       </div>
