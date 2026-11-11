@@ -2,9 +2,7 @@ import { motion, type Variants } from "motion/react";
 import { GiElectric } from "react-icons/gi";
 import { FaSolarPanel, FaLeaf, FaDollarSign } from "react-icons/fa";
 import StatLoader from "./loaders/stat-loader";
-import {} from "date-fns";
-import { useServerFn } from "@tanstack/react-start";
-import { getServerMonthly } from "@/queries";
+import { getMonthly } from "@/queries";
 import { useQuery } from "@tanstack/react-query";
 import { useReadContracts } from "wagmi";
 import { rollupContract } from "@/config/rollup";
@@ -25,7 +23,6 @@ const cardVariants: Variants = {
 };
 
 function Statistics3({ m3terIds }: { m3terIds: number[] }) {
-  const getMonthly = useServerFn(getServerMonthly);
   const { data: accountHexes, isLoading: isLoadingAllAccounts } =
     useReadContracts({
       allowFailure: true,
@@ -38,7 +35,7 @@ function Statistics3({ m3terIds }: { m3terIds: number[] }) {
 
   const { data: energyDataMonthly, isLoading: isLoadingAccount } = useQuery({
     queryKey: ["getAccount", m3terIds],
-    queryFn: () => getMonthly({ data: m3terIds }),
+    queryFn: () => getMonthly({ input: m3terIds }),
   });
 
   if (isLoadingAccount || isLoadingAllAccounts) {

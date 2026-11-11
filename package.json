@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@daimo/sdk": "^1.0.1",
-    "@duneanalytics/client-sdk": "^0.3.5",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-label": "^2.1.8",
@@ -32,6 +31,7 @@
     "chart.js": "^4.5.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "gql.tada": "^1.11.4",
     "lucide-react": "^0.546.0",
     "m3terscan-components": "^1.0.2",
     "motion": "^12.23.24",
@@ -45,6 +45,7 @@
     "react-icons": "^5.5.0",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.14",
+    "urql": "^5.0.4",
     "viem": "^2.46.1",
     "wagmi": "^3.4.4",
     "zod": "^4.1.12"

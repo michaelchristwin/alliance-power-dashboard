@@ -1,13 +1,10 @@
-import z from "zod";
+import { graphql } from "../graphql";
 import { getContext } from "@/integrations/client";
 import { createServerFn } from "@tanstack/react-start";
-import { DuneClient } from "@duneanalytics/client-sdk";
 import { getLastDayOfPreviousMonthUTC } from "@/lib/utils";
 import { getUnixTime } from "date-fns";
 import { queryOptions } from "@tanstack/react-query";
 import { Configuration, MeterApi, ProposalApi } from "@/api-sdk";
-
-const dune = new DuneClient(process.env.DUNE_API_KEY || "");
 
 const config = new Configuration({
   basePath: import.meta.env.VITE_API_URL || "",
@@ -60,8 +57,6 @@ const proposalQueries = {
     }),
 };
 
-const propsSchema = z.array(z.number().int());
-
 async function GetDaily(meterIds: number[]) {
   const { queryClient } = getContext();
 
@@ -73,74 +68,117 @@ async function GetDaily(meterIds: number[]) {
 
   return data;
 }
-
-const getServerAccounts = createServerFn({ method: "GET" })
-  .inputValidator(propsSchema)
-  .handler(async ({ data }) => {
-    const { queryClient } = getContext();
-
-    const { result, error } = await dune.getLatestResult({ queryId: 5911866 });
-
-    if (error || !result) {
-      throw new Error(error?.message || "No result found");
+export const commitsQueryByBlocktime = graphql(`
+  query CommitsList($limit: Int = 10, $offset: Int = 0, $blockTime: BigInt!) {
+    commits(
+      limit: $limit
+      offset: $offset
+      orderBy: "blockTime"
+      orderDirection: "DESC"
+      where: { blockTime_gte: $blockTime }
+    ) {
+      items {
+        txHash
+        blockTime
+        sender
+        chainLength
+        state {
+          items {
+            meterNo
+            account
+            nonce
+          }
+        }
+      }
+      totalCount
     }
+  }
+`);
+export const commitsQuery = graphql(`
+  query CommitsList($limit: Int = 10, $offset: Int = 0) {
+    commits(
+      limit: $limit
+      offset: $offset
+      orderBy: "blockTime"
+      orderDirection: "DESC"
+    ) {
+      items {
+        txHash
+        blockTime
+        sender
+        chainLength
+        state {
+          items {
+            meterNo
+            account
+            nonce
+          }
+        }
+      }
+      totalCount
+    }
+  }
+`);
 
-    const startRow = result.rows
-      .filter(
-        (row) =>
-          getUnixTime(new Date(row.block_time as string)) >=
-          getUnixTime(getLastDayOfPreviousMonthUTC()),
-      )
-      .sort(
-        (a, b) =>
-          getUnixTime(new Date(a.block_time as string)) -
-          getUnixTime(new Date(b.block_time as string)),
+async function getAccounts({ input }: { input: number[] }) {
+  const { urqlClient } = getContext();
+  const { data, error } = await urqlClient
+    .query(commitsQueryByBlocktime, {
+      blockTime: BigInt(getUnixTime(getLastDayOfPreviousMonthUTC())),
+      limit: 1,
+    })
+    .toPromise();
+  if (error) {
+    throw Error(error.message);
+  }
+
+  if (!data) {
+    throw new Error("No result found");
+  }
+  const previousCommit = data.commits.items[0];
+  const { data: latestData, error: _error } = await urqlClient
+    .query(commitsQuery, {
+      limit: 1,
+    })
+    .toPromise();
+  if (_error) {
+    throw Error(_error.message);
+  }
+  if (!latestData) {
+    throw new Error("No result found");
+  }
+
+  const latestCommit = latestData.commits.items[0];
+
+  const latestAccount = latestCommit.state?.items
+    .filter((proposal) => input.includes(proposal.meterNo))
+    .reduce((sum, val) => sum + Number(val.account), 0);
+  const headaccount = previousCommit.state?.items
+    .filter((proposal) => input.includes(proposal.meterNo))
+    .reduce((sum, val) => sum + Number(val.account), 0);
+  if (!headaccount) throw Error("Account for last month is undefined");
+  if (!latestAccount) throw Error("Latest account is undefined");
+
+  return Math.max(latestAccount - headaccount, 0);
+}
+
+async function getMonthly({ input }: { input: number[] }) {
+  const { queryClient } = getContext();
+  const date = new Date();
+  const monthData = await Promise.all(
+    input.map((id) => {
+      return queryClient.fetchQuery(
+        meterQueries.getMonthOfYear(
+          id,
+          date.getMonth() + 1,
+          date.getFullYear() + 1,
+        ),
       );
+    }),
+  );
 
-    const latestRow = result.rows[result.rows.length - 1];
-
-    if (!startRow.length || !latestRow) {
-      throw new Error("Missing rows for proposal lookup");
-    }
-
-    const [headProposal, latestProposal] = await Promise.all([
-      queryClient.fetchQuery(
-        proposalQueries.getProposals(startRow[0].hash as string),
-      ),
-      queryClient.fetchQuery(
-        proposalQueries.getProposals(latestRow.hash as string),
-      ),
-    ]);
-
-    const latestAccount = latestProposal
-      .filter((proposal) => data.includes(proposal.m3ter_no))
-      .reduce((sum, val) => sum + Number(val.account), 0);
-    const headaccount = headProposal
-      .filter((proposal) => data.includes(proposal.m3ter_no))
-      .reduce((sum, val) => sum + Number(val.account), 0);
-
-    return Math.max(latestAccount - headaccount, 0);
-  });
-
-const getServerMonthly = createServerFn({ method: "GET" })
-  .inputValidator(propsSchema)
-  .handler(async ({ data }) => {
-    const { queryClient } = getContext();
-    const d = new Date();
-    const monthData = await Promise.all(
-      data.map((id) => {
-        return queryClient.fetchQuery(
-          meterQueries.getMonthOfYear(
-            id,
-            d.getMonth() + 1,
-            d.getFullYear() + 1,
-          ),
-        );
-      }),
-    );
-
-    return monthData;
-  });
+  return monthData;
+}
 
 const fetchSession = createServerFn({ method: "POST" }).handler(async () => {
   const response = await fetch("https://api.daimo.com/v1/sessions", {
@@ -169,8 +207,8 @@ const fetchSession = createServerFn({ method: "POST" }).handler(async () => {
 
 export {
   GetDaily,
-  getServerAccounts,
-  getServerMonthly,
+  getAccounts,
+  getMonthly,
   fetchSession,
   meterQueries,
   proposalQueries,
